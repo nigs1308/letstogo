@@ -40,6 +40,21 @@ class Solution {
 ```
 
 ```
+/**
+Given a 2D binary matrix filled with 0's and 1's, find the largest square containing only 1's and return its area.
+
+Example:
+
+Input: 
+
+1 0 1 0 0
+1 0 1 1 1
+1 1 1 1 1
+1 0 0 1 0
+
+Output: 4
+
+*/
 class Solution {
     public int maximalSquare(char[][] matrix) {
     if(matrix==null||matrix.length==0){
@@ -74,6 +89,54 @@ class Solution {
     }
  
     return result*result;
+    }
+}
+```
+
+```
+/***
+Given two strings str1 and str2 of the same length, determine whether you can transform str1 into str2 by doing zero or more conversions.
+
+In one conversion you can convert all occurrences of one character in str1 to any other lowercase English character.
+
+Return true if and only if you can transform str1 into str2.
+
+ 
+
+Example 1:
+
+Input: str1 = "aabcc", str2 = "ccdee"
+Output: true
+Explanation: Convert 'c' to 'e' then 'b' to 'd' then 'a' to 'c'. Note that the order of conversions matter.
+
+Example 2:
+
+Input: str1 = "leetcode", str2 = "codeleet"
+Output: false
+Explanation: There is no way to transform str1 to str2.
+
+ 
+*/
+class Solution {
+    public boolean canConvert(String str1, String str2) {
+        if(str1.equals(str2)){
+            return true;
+        }
+        Set<Character> s = new HashSet<>();
+        for(Character c : str2.toCharArray()){
+            s.add(c);
+        }
+        if(s.size() == 26) return false;
+        
+        Map<Character, Character> mp = new HashMap<>();
+        for(int i = 0; i < str1.length(); i ++){
+            if(mp.get(str1.charAt(i)) == null){
+                mp.put(str1.charAt(i), str2.charAt(i));
+            }else if(mp.get(str1.charAt(i)) != str2.charAt(i)){
+                return false;
+            }
+        }
+        return true;
     }
 }
 ```
