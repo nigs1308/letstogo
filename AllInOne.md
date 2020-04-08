@@ -18,4 +18,25 @@ Return false.
 Follow up:
 If there are lots of incoming S, say S1, S2, ... , Sk where k >= 1B, and you want to check one by one to see if T has its subsequence. In this scenario, how would you change your code?
 */
+```
+class Solution {
+    public boolean isSubsequence(String s, String t) {
+        if(s.length() == 0){
+            return true;
+        }
+        int i = 0, j = 0;
+        while(i < s.length() && j < t.length()){
+            if(s.charAt(i) == t.charAt(j)){
+                i++;
+            }
+            j++;
+            if(i == s.length()){
+                return true;
+            }
+        }
+        return false;
+    }
+}
+```
+
 
