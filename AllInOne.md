@@ -430,6 +430,7 @@ Output: [-1]
 Explanation: There is no 3 in the array.
 
 ```
+```
 class Solution {
     public List<Integer> shortestDistanceColor(int[] colors, int[][] queries) {
         List<Integer> result = new ArrayList<>();
