@@ -259,4 +259,150 @@ class ExamRoom {
  * obj.leave(p);
  */
  ```
+ 
+ ```
+ On an alphabet board, we start at position (0, 0), corresponding to character board[0][0].
 
+Here, board = ["abcde", "fghij", "klmno", "pqrst", "uvwxy", "z"], as shown in the diagram below.
+
+We may make the following moves:
+
+    'U' moves our position up one row, if the position exists on the board;
+    'D' moves our position down one row, if the position exists on the board;
+    'L' moves our position left one column, if the position exists on the board;
+    'R' moves our position right one column, if the position exists on the board;
+    '!' adds the character board[r][c] at our current position (r, c) to the answer.
+
+(Here, the only positions that exist on the board are positions with letters on them.)
+
+Return a sequence of moves that makes our answer equal to target in the minimum number of moves.  You may return any path that does so.
+```
+
+```
+class Solution {
+    public String alphabetBoardPath(String target) {
+        StringBuilder sb = new StringBuilder();
+        int preRow = 0, preCol = 0;
+        for(int i = 0 ; i < target.length() ; i ++){
+            int currRow = (target.charAt(i) - 'a')/5;
+            int currCol = (target.charAt(i) - 'a')%5;
+            addPath(currRow, preRow, currCol, preCol, sb);
+            sb.append('!');
+            preRow = currRow;
+            preCol = currCol;
+        }
+        return sb.toString();
+    }
+    
+    public void addPath(int currRow, int preRow, int currCol, int preCol, StringBuilder sb){
+        while(currRow < preRow){
+            sb.append('U');
+            preRow--;
+        }
+        
+        while(currCol < preCol){
+            sb.append('L');
+            preCol--;
+        }
+        
+        while(currCol > preCol){
+            sb.append('R');
+            preCol++;
+        }
+        
+        while(currRow > preRow){
+            sb.append('D');
+            preRow++;
+        }
+    }
+}
+```
+n a 2x3 board, there are 5 tiles represented by the integers 1 through 5, and an empty square represented by 0.
+
+A move consists of choosing 0 and a 4-directionally adjacent number and swapping it.
+
+The state of the board is solved if and only if the board is [[1,2,3],[4,5,0]].
+
+Given a puzzle board, return the least number of moves required so that the state of the board is solved. If it is impossible for the state of the board to be solved, return -1.
+
+Examples:
+
+Input: board = [[1,2,3],[4,0,5]]
+Output: 1
+Explanation: Swap the 0 and the 5 in one move.
+
+Input: board = [[1,2,3],[5,4,0]]
+Output: -1
+Explanation: No number of moves will make the board solved.
+
+Input: board = [[4,1,2],[5,0,3]]
+Output: 5
+Explanation: 5 is the smallest number of moves that solves the board.
+An example path:
+After move 0: [[4,1,2],[5,0,3]]
+After move 1: [[4,1,2],[0,5,3]]
+After move 2: [[0,1,2],[4,5,3]]
+After move 3: [[1,0,2],[4,5,3]]
+After move 4: [[1,2,0],[4,5,3]]
+After move 5: [[1,2,3],[4,5,0]]
+
+Input: board = [[3,2,4],[1,5,0]]
+Output: 14
+
+```
+class Solution {
+    public int slidingPuzzle(int[][] board) {
+        int col = board.length;
+        int row = board[0].length;
+        StringBuilder sb = new StringBuilder();
+        for (int[] i : board) {
+            for (int j : i) {
+                sb.append(j);
+            }
+        }
+        String start = sb.toString();
+        String end = "123450";
+        
+        if (board == null || board.length == 0) return -1;
+        if (start.equals(end)) return 0;
+        
+        Set<String> visited = new HashSet<>();
+        Queue<String> queue = new LinkedList<>();
+        int ans = 0;
+        int[][] dirs = new int[][] {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+        
+        
+        queue.offer(start);
+        visited.add(start);
+        while (!queue.isEmpty()) {
+            ans++;
+            int n = queue.size();
+            for (int i = 0; i < n; i++) {
+                String cur = queue.poll();
+                int zero = cur.indexOf('0');
+                int zeroCol = zero / row;
+                int zeroRow = zero % row;
+                
+                for (int[] dir : dirs) {
+                    int nextRow = zeroRow + dir[0];
+                    int nextCol = zeroCol + dir[1];
+                    if (nextCol < 0 || nextCol >= col || nextRow < 0 || nextRow >= row) continue;
+                    String newString = swap(cur, zero, nextCol * row + nextRow);
+                    if (newString.equals(end)) return ans;
+                    if (visited.contains(newString)) continue;
+                    
+                    visited.add(newString);
+                    queue.offer(newString);
+                }
+            }
+        }
+        return -1;
+    }
+    private String swap(String s, int i, int j) {
+        StringBuilder sb = new StringBuilder(s);
+        sb.setCharAt(i, s.charAt(j));
+        sb.setCharAt(j, s.charAt(i));
+        return sb.toString();
+    }
+}
+```
