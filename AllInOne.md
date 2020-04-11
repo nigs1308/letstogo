@@ -799,3 +799,40 @@ class Solution {
     }
 }
 ```
+
+```
+iven a binary string S (a string consisting only of '0' and '1's) and a positive integer N, return true if and only if for every integer X from 1 to N, the binary representation of X is a substring of S.
+
+ 
+
+Example 1:
+
+Input: S = "0110", N = 3
+Output: true
+
+Example 2:
+
+Input: S = "0110", N = 4
+Output: false
+```
+
+```
+class Solution {
+    public boolean queryString(String S, int N) {
+        if(S == null || S.length() == 0)
+            return false;
+        
+        if( N < 1)
+            return false;
+        
+        for(int i = 1 ; i <= N ; i ++){
+            // binary number
+            String binary = Integer.toBinaryString(i);
+            if(S.indexOf(binary) == -1){
+                return false;
+            }
+        }
+        return true;
+    }
+}
+```
