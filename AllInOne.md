@@ -1473,3 +1473,69 @@ With this in mind, the rest of the solution is straightforward: we use dynamic p
     }
 }
 ```
+
+```
+A matrix is Toeplitz if every diagonal from top-left to bottom-right has the same element.
+
+Now given an M x N matrix, return True if and only if the matrix is Toeplitz.
+ 
+
+Example 1:
+
+Input:
+matrix = [
+  [1,2,3,4],
+  [5,1,2,3],
+  [9,5,1,2]
+]
+Output: True
+Explanation:
+In the above grid, the diagonals are:
+"[9]", "[5, 5]", "[1, 1, 1]", "[2, 2, 2]", "[3, 3]", "[4]".
+In each diagonal all elements are the same, so the answer is True.
+
+Example 2:
+
+Input:
+matrix = [
+  [1,2],
+  [2,2]
+]
+Output: False
+Explanation:
+The diagonal "[1, 2]" has different elements.
+
+```
+```
+class Solution {
+    public boolean isToeplitzMatrix(int[][] matrix) {
+        int N = matrix.length;
+        int M = matrix[0].length;
+        for(int i = 0 ; i < M ; i++ ){
+            if(!verifyDiagonal(matrix, 0, i)){
+                return false;
+            }
+        }
+        
+        for(int i = 0 ; i < N ; i++ ){
+            if(!verifyDiagonal(matrix,i, 0)){
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
+    public boolean verifyDiagonal(int m[][], int i , int j){
+        int res = m[i][j];
+        int N = m.length;
+        int M = m[0].length;
+        while(++i < N && ++j < M){
+            if (m[i][j] != res){
+                return false;
+            }
+        }
+        return true;
+    }
+}
+```
