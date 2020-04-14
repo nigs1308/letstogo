@@ -1726,6 +1726,8 @@ Rules for a valid pattern:
     The order of keys used matters.
 
 ```
+
+```
 class Solution {
         private int[][] jumps;
         private boolean[] visited;
@@ -1768,6 +1770,7 @@ class Solution {
             return count;
         }
 }
+
 ```
 
 ```
@@ -1817,6 +1820,7 @@ Operation: input('#')
 Output: []
 Explanation:
 The user finished the input, the sentence "i a" should be saved as a historical sentence in system. And the following input will be counted as a new search.
+
 ```
 
 ```
