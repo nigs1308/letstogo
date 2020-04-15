@@ -2145,8 +2145,11 @@ Explanation: You will always arrive at index 3 no matter what. Its maximum
 class Solution {
     public boolean canJump(int[] nums) {
         int max = nums[0];
+        if(nums.length == 1 && max >= 0){
+            return true;
+        }
         for(int i=0 ; i < nums.length; i ++){
-            if(max < i && nums[i] == 0){
+            if(max <= i && nums[i] == 0){
                 return false;
             }
             if(i+nums[i] > max){
