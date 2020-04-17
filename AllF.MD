@@ -64,15 +64,6 @@ Output: false
 Explanation: The node with value 7 isn't as far left as possible.
 
 ```
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode(int x) { val = x; }
- * }
- */
 class Solution {
     public boolean isCompleteTree(TreeNode root) {
         if(root == null)
