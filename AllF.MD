@@ -64,6 +64,8 @@ Output: false
 Explanation: The node with value 7 isn't as far left as possible.
 
 ```
+
+```
 class Solution {
     public boolean isCompleteTree(TreeNode root) {
         if(root == null)
