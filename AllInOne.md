@@ -2286,3 +2286,145 @@ class Solution {
     }
 }
 ```
+
+
+```
+Course Schedule II
+
+There are a total of n courses you have to take, labeled from 0 to n-1.
+
+Some courses may have prerequisites, for example to take course 0 you have to first take course 1, which is expressed as a pair: [0,1]
+
+Given the total number of courses and a list of prerequisite pairs, return the ordering of courses you should take to finish all courses.
+
+There may be multiple correct orders, you just need to return one of them. If it is impossible to finish all courses, return an empty array.
+
+Example 1:
+
+Input: 2, [[1,0]] 
+Output: [0,1]
+Explanation: There are a total of 2 courses to take. To take course 1 you should have finished   
+             course 0. So the correct course order is [0,1] .
+
+Example 2:
+
+Input: 4, [[1,0],[2,0],[3,1],[3,2]]
+Output: [0,1,2,3] or [0,2,1,3]
+Explanation: There are a total of 4 courses to take. To take course 3 you should have finished both     
+             courses 1 and 2. Both courses 1 and 2 should be taken after you finished course 0. 
+             So one correct course order is [0,1,2,3]. Another correct ordering is [0,2,1,3] .
+
+Note:
+
+    The input prerequisites is a graph represented by a list of edges, not adjacency matrices. Read more about how a graph is represented.
+    You may assume that there are no duplicate edges in the input prerequisites.
+
+```
+
+```
+class Solution {
+    public int[] findOrder(int numCourses, int[][] prerequisites) {
+        int len = prerequisites.length;
+        if(numCourses == 0 && len == 0){
+            return null;
+        }
+        int[] result = new int[numCourses];
+         if(len == 0){
+            result [0] = 0;
+        }
+
+        // counter for number of prerequisites
+        int[] pCounter = new int[numCourses];
+        for(int i=0; i<len; i++){
+            pCounter[prerequisites[i][0]]++;
+        }
+
+        //store courses that have no prerequisites
+        LinkedList<Integer> queue = new LinkedList<Integer>();
+        for(int i=0; i<numCourses; i++){
+            if(pCounter[i]==0){
+                queue.add(i);
+            }
+        }
+
+        // number of courses that have no prerequisites
+        int numNoPre = queue.size();
+        int j = 0;
+        while(!queue.isEmpty()){
+            int top = queue.remove();
+            result[j++] = top;
+            for(int i=0; i<len; i++){
+                // if a course's prerequisite can be satisfied by a course in queue
+                if(prerequisites[i][1]==top){
+                    if(--pCounter[prerequisites[i][0]] ==0){
+                        numNoPre++;
+                        queue.add(prerequisites[i][0]);
+                    }
+                }
+            }
+        }
+        
+        return numNoPre == numCourses ? result : new int [0];
+
+    }
+}
+```
+
+
+```
+ Number of Islands
+
+Given a 2d grid map of '1's (land) and '0's (water), count the number of islands. An island is surrounded by water and is formed by connecting adjacent lands horizontally or vertically. You may assume all four edges of the grid are all surrounded by water.
+
+Example 1:
+
+Input:
+11110
+11010
+11000
+00000
+
+Output: 1
+
+Example 2:
+
+Input:
+11000
+11000
+00100
+00011
+
+Output: 3
+```
+
+```
+class Solution {
+    public int numIslands(char[][] grid) {
+        if(grid == null || grid.length == 0){
+            return 0;
+        }
+        
+        int numIslands = 0;
+        for(int i = 0 ; i < grid.length; i++){
+            for(int j = 0; j < grid[i].length;  j++){
+                if(grid[i][j] == '1'){
+                    numIslands += dfs(grid, i, j);
+                }
+            }
+        }
+        return numIslands;
+    }
+    
+    public int dfs(char [][] grid, int i, int j){
+        if(i < 0 || i >= grid.length || j < 0 || j>= grid[i].length || grid[i][j] == '0' ){
+            return 0;
+        }
+        grid[i][j] = '0';
+        dfs(grid, i+1, j);
+        dfs(grid, i-1, j);
+        dfs(grid, i , j+1);
+        dfs(grid, i, j-1);
+        return 1;
+    }
+}
+```
