@@ -2557,3 +2557,90 @@ class Solution {
     }
 }
 ```
+
+```
+Evaluate Division
+
+Equations are given in the format A / B = k, where A and B are variables represented as strings, and k is a real number (floating point number). Given some queries, return the answers. If the answer does not exist, return -1.0.
+
+Example:
+Given a / b = 2.0, b / c = 3.0.
+queries are: a / c = ?, b / a = ?, a / e = ?, a / a = ?, x / x = ? .
+return [6.0, 0.5, -1.0, 1.0, -1.0 ].
+
+The input is: vector<pair<string, string>> equations, vector<double>& values, vector<pair<string, string>> queries , where equations.size() == values.size(), and the values are positive. This represents the equations. Return vector<double>.
+
+According to the example above:
+
+equations = [ ["a", "b"], ["b", "c"] ],
+values = [2.0, 3.0],
+queries = [ ["a", "c"], ["b", "a"], ["a", "e"], ["a", "a"], ["x", "x"] ]. 
+
+ 
+
+The input is always valid. You may assume that evaluating the queries will result in no division by zero and there is no contradiction.
+
+```
+
+```
+
+class Solution {
+    private Map<String, String> root;
+    private Map<String, Double> rate;
+
+    public double[] calcEquation(List<List<String>> equations, double[] values, List<List<String>> queries) {
+        root = new HashMap<String, String>();
+        rate = new HashMap<String, Double>();
+        int n = equations.size();
+        for (int i = 0; i < n; ++i) {
+            String X = equations.get(i).get(0);
+            String Y = equations.get(i).get(1);
+            root.put(X, X);
+            root.put(Y, Y);
+            rate.put(X, 1.0);
+            rate.put(Y, 1.0);
+        }
+
+        for (int i = 0; i < n; ++i) {
+            String X = equations.get(i).get(0);
+            String Y = equations.get(i).get(1);
+            union(X, Y, values[i]);
+        }
+
+        double[] result = new double[queries.size()];
+        for (int i = 0; i < queries.size(); ++i) {
+            String X = queries.get(i).get(0);
+            String Y = queries.get(i).get(1);
+            if (!root.containsKey(X) || !root.containsKey(Y)) {
+                result[i] = -1;
+                continue;
+            }
+
+            String rootx = findRoot(X, X, 1.0);
+            String rooty = findRoot(Y, Y, 1.0);
+            result[i] = rootx.equals(rooty) ? rate.get(X) / rate.get(Y) : -1.0;
+        }
+        
+        return result;
+    }
+
+    private void union(String X, String Y, double v) {
+        String rootx = findRoot(X, X, 1.0);
+        String rooty = findRoot(Y, Y, 1.0);
+        root.put(rootx, rooty);
+        double r1 = rate.get(X);
+        double r2 = rate.get(Y);
+        rate.put(rootx, v * r2 / r1);
+    }
+
+    private String findRoot(String originalX, String X, double r) {
+        if (root.get(X).equals(X)) {
+            root.put(originalX, X);
+            rate.put(originalX, r * rate.get(X));
+            return X;
+        }
+
+        return findRoot(originalX, root.get(X), r * rate.get(X));
+    }
+}
+```
