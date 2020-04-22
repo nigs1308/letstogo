@@ -3020,3 +3020,173 @@ class Solution {
     }
 }
 ```
+
+```
+On a campus represented as a 2D grid, there are N workers and M bikes, with N <= M. Each worker and bike is a 2D coordinate on this grid.
+
+We assign one unique bike to each worker so that the sum of the Manhattan distances between each worker and their assigned bike is minimized.
+
+The Manhattan distance between two points p1 and p2 is Manhattan(p1, p2) = |p1.x - p2.x| + |p1.y - p2.y|.
+
+Return the minimum possible sum of Manhattan distances between each worker and their assigned bike.
+
+ 
+
+Example 1:
+
+Input: workers = [[0,0],[2,1]], bikes = [[1,2],[3,3]]
+Output: 6
+Explanation: 
+We assign bike 0 to worker 0, bike 1 to worker 1. The Manhattan distance of both assignments is 3, so the output is 6.
+
+Example 2:
+
+Input: workers = [[0,0],[1,1],[2,0]], bikes = [[1,0],[2,2],[2,1]]
+Output: 4
+Explanation: 
+We first assign bike 0 to worker 0, then assign bike 1 to worker 1 or worker 2, bike 2 to worker 2 or worker 1. Both assignments lead to sum of the Manhattan distances as 4.
+
+ 
+
+Note:
+
+    0 <= workers[i][0], workers[i][1], bikes[i][0], bikes[i][1] < 1000
+    All worker and bike locations are distinct.
+    1 <= workers.length <= bikes.length <= 10
+    
+```
+
+```
+class Solution {
+    public int min = Integer.MAX_VALUE;
+	
+    public int assignBikes(int[][] workers, int[][] bikes) {
+        dfs(workers, bikes, 0, 0, new boolean[bikes.length], new int[workers.length][bikes.length]);
+        return min;
+    }
+    public void dfs(int[][] workers, int[][] bikes, int index, int distance, boolean[] isOccupied, int[][] dis) {
+        if (index == workers.length) {
+            min = Math.min(min, distance);
+            return; 
+        }
+        
+        if (distance >= min) {
+            return;
+        }
+        for (int i = 0; i < bikes.length; i++) {
+            if (!isOccupied[i]) {
+                isOccupied[i] = true;
+
+                if (dis[index][i] == 0) {
+                    dis[index][i] = calcDistance(workers[index], bikes[i]);
+                }
+
+                dfs(workers, bikes, index + 1,  dis[index][i] + distance, isOccupied, dis);
+                isOccupied[i] = false;
+            }
+        }
+        return;
+    }
+    public int calcDistance(int[] worker, int[] bike) {
+        return Math.abs(worker[0] - bike[0]) + Math.abs(worker[1] - bike[1]);
+    }
+}
+```
+
+
+```
+Binary Tree Coloring Game
+
+Two players play a turn based game on a binary tree.  We are given the root of this binary tree, and the number of nodes n in the tree.  n is odd, and each node has a distinct value from 1 to n.
+
+Initially, the first player names a value x with 1 <= x <= n, and the second player names a value y with 1 <= y <= n and y != x.  The first player colors the node with value x red, and the second player colors the node with value y blue.
+
+Then, the players take turns starting with the first player.  In each turn, that player chooses a node of their color (red if player 1, blue if player 2) and colors an uncolored neighbor of the chosen node (either the left child, right child, or parent of the chosen node.)
+
+If (and only if) a player cannot choose such a node in this way, they must pass their turn.  If both players pass their turn, the game ends, and the winner is the player that colored more nodes.
+
+You are the second player.  If it is possible to choose such a y to ensure you win the game, return true.  If it is not possible, return false.
+
+ 
+
+Example 1:
+
+Input: root = [1,2,3,4,5,6,7,8,9,10,11], n = 11, x = 3
+Output: true
+Explanation: The second player can choose the node with value 2.
+
+```
+
+```
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    TreeNode xNode = null;
+    int leftSize, rightSize;
+    public boolean btreeGameWinningMove(TreeNode root, int n, int x) {
+        dfs(root, x);
+        return Math.max(n-leftSize-rightSize-1, Math.max(leftSize, rightSize)) > n/2;
+    }
+    
+    private int dfs(TreeNode root, int x){
+        if(root == null)
+            return 0;
+        int left = dfs(root.left, x);
+        int right = dfs(root.right, x);
+        if(root.val == x){
+            leftSize = left;
+            rightSize = right;
+        }
+        return left + right + 1;
+    }
+}
+```
+
+
+```
+Perfect Squares
+
+Given a positive integer n, find the least number of perfect square numbers (for example, 1, 4, 9, 16, ...) which sum to n.
+
+Example 1:
+
+Input: n = 12
+Output: 3 
+Explanation: 12 = 4 + 4 + 4.
+
+Example 2:
+
+Input: n = 13
+Output: 2
+Explanation: 13 = 4 + 9.
+
+```
+
+```
+class Solution {
+    public int numSquares(int n) {
+        int max = (int) Math.sqrt(n);
+        
+        int[] dp = new int [n+1];
+        Arrays.fill(dp, Integer.MAX_VALUE);
+        for(int i = 1; i <= n ; i++){
+            for(int j = 1; j <= max; j++){
+                if(i == j*j){
+                    dp[i] = 1;
+                }else if( i > j*j){
+                    dp[i] = Math.min(dp[i], dp[i-j*j] + 1);
+                }
+            }
+        }
+        return dp[n];
+    }
+}
+```
+
