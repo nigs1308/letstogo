@@ -1523,3 +1523,196 @@ class Solution {
     }
 }
 ```
+
+```
+Move Zeroes
+
+Given an array nums, write a function to move all 0's to the end of it while maintaining the relative order of the non-zero elements.
+
+Example:
+
+Input: [0,1,0,3,12]
+Output: [1,3,12,0,0]
+
+Note:
+
+    You must do this in-place without making a copy of the array.
+    Minimize the total number of operations.
+
+```
+
+```
+class Solution {
+    public void moveZeroes(int[] nums) {
+        int c = 0;
+        for(int i : nums){
+            if(i != 0){
+                nums[c++] = i;
+            }
+        }
+        
+        while(c < nums.length){
+            nums[c++] = 0;
+        }
+    }
+}
+```
+
+
+```
+Subarray Sum Equals K
+
+Given an array of integers and an integer k, you need to find the total number of continuous subarrays whose sum equals to k.
+
+Example 1:
+
+Input:nums = [1,1,1], k = 2
+Output: 2
+
+Note:
+
+    The length of the array is in range [1, 20,000].
+    The range of numbers in the array is [-1000, 1000] and the range of the integer k is [-1e7, 1e7].
+
+```
+
+```
+class Solution {
+    public int subarraySum(int[] nums, int k) {
+        int count = 0 , sum = 0;
+        HashMap<Integer, Integer> map = new HashMap<> ();
+        map.put(0, 1);
+        for(int i = 0; i < nums.length; i ++){
+            sum += nums[i];
+            if(map.containsKey(sum-k))
+                count += map.get(sum-k);
+            map.put(sum, map.getOrDefault(sum, 0) + 1);
+        }
+        return count;
+    }
+}
+```
+
+```
+Given a binary tree, return the vertical order traversal of its nodes' values. (ie, from top to bottom, column by column).
+
+If two nodes are in the same row and column, the order should be from left to right.
+
+Examples 1:
+
+Input: [3,9,20,null,null,15,7]
+
+   3
+  /\
+ /  \
+ 9  20
+    /\
+   /  \
+  15   7 
+
+Output:
+
+[
+  [9],
+  [3,15],
+  [20],
+  [7]
+]
+
+Examples 2:
+
+Input: [3,9,8,4,0,1,7]
+
+     3
+    /\
+   /  \
+   9   8
+  /\  /\
+ /  \/  \
+ 4  01   7 
+
+Output:
+
+[
+  [4],
+  [9],
+  [3,0,1],
+  [8],
+  [7]
+]
+
+Examples 3:
+
+Input: [3,9,8,4,0,1,7,null,null,null,2,5] (0's right child is 2 and 1's left child is 5)
+
+     3
+    /\
+   /  \
+   9   8
+  /\  /\
+ /  \/  \
+ 4  01   7
+    /\
+   /  \
+   5   2
+
+Output:
+
+[
+  [4],
+  [9,5],
+  [3,0,1],
+  [8,2],
+  [7]
+]
+
+```
+
+```
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public List<List<Integer>> verticalOrder(TreeNode root) {
+        TreeMap<Integer, ArrayList<Integer>> map = new TreeMap<>();
+        helper(root, map);
+        List<List<Integer>> result = new ArrayList<>();
+        result.addAll(map.values());
+        return result;
+    }
+    private void helper(TreeNode t, TreeMap<Integer, ArrayList<Integer>> map){
+        if(t  == null)
+            return;
+        LinkedList<TreeNode> q1 = new LinkedList<>();
+        LinkedList<Integer> q2 = new LinkedList<>();
+        q1.offer(t);
+        q2.offer(0);
+        while(!q1.isEmpty()){
+            TreeNode node = q1.poll();
+            int order =q2.poll();
+            ArrayList<Integer> list = map.get(order);
+            if(list == null){
+                list = new ArrayList<>();
+                map.put(order, list);
+            }
+            list.add(node.val);
+            if(node.left != null){
+                q1.offer(node.left);
+                q2.offer(order-1);
+            }
+            
+            if(node.right != null){
+                q1.offer(node.right);
+                q2.offer(order+1);
+            }
+        }
+     }
+}
+
+```
