@@ -3234,6 +3234,8 @@ class Solution {
         for(String s : result){
             ans[i++] = s;
         }
+        // for lexography, we need to sort that
+        Arrays.sort(ans);
         return ans;
     }
     
@@ -3258,4 +3260,5 @@ class Solution {
         }
     }
 }
+
 ```
