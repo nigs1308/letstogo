@@ -3190,3 +3190,72 @@ class Solution {
 }
 ```
 
+```
+Brace Expansion
+Medium
+
+A string S represents a list of words.
+
+Each letter in the word has 1 or more options.  If there is one option, the letter is represented as is.  If there is more than one option, then curly braces delimit the options.  For example, "{a,b,c}" represents options ["a", "b", "c"].
+
+For example, "{a,b,c}d{e,f}" represents the list ["ade", "adf", "bde", "bdf", "cde", "cdf"].
+
+Return all words that can be formed in this manner, in lexicographical order.
+
+ 
+
+Example 1:
+
+Input: "{a,b}c{d,e}f"
+Output: ["acdf","acef","bcdf","bcef"]
+
+Example 2:
+
+Input: "abcd"
+Output: ["abcd"]
+
+ 
+
+Note:
+
+    1 <= S.length <= 50
+    There are no nested curly brackets.
+    All characters inside a pair of consecutive opening and ending curly brackets are different.
+
+```
+
+```
+class Solution {
+    public String[] expand(String S) {
+        List<String> result = new ArrayList<>();
+        dfs(S, 0, "", result);
+        String [] ans = new String[result.size()];
+        int i = 0;
+        for(String s : result){
+            ans[i++] = s;
+        }
+        return ans;
+    }
+    
+    public void dfs(String s, int start, String curr, List<String> res){
+        if(start == s.length()){
+            res.add(curr);
+            return;
+        }
+        
+        int left = s.indexOf('{', start); /// from offset, get the starting index {
+        int right = s.indexOf('}', start); /// from offset, get the starting index }
+        if(left == -1){
+            res.add(curr + s.substring(start));
+            return;
+        }
+        
+        String sub = s.substring(left+1, right);
+        String [] strs = sub.split(",");
+        // do it for the rest of them, after the closing }
+        for(String str : strs){
+            dfs(s, right+1, curr+s.substring(start, left) + str, res);
+        }
+    }
+}
+```
