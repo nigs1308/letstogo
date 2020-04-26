@@ -3779,3 +3779,348 @@ class Solution {
     }
 }
 ```
+
+```
+iven a string, we can "shift" each of its letter to its successive letter, for example: "abc" -> "bcd". We can keep "shifting" which forms the sequence:
+
+"abc" -> "bcd" -> ... -> "xyz"
+
+Given a list of strings which contains only lowercase alphabets, group all strings that belong to the same shifting sequence.
+
+Example:
+
+Input: ["abc", "bcd", "acef", "xyz", "az", "ba", "a", "z"],
+Output: 
+[
+  ["abc","bcd","xyz"],
+  ["az","ba"],
+  ["acef"],
+  ["a","z"]
+]
+
+```
+
+```
+class Solution {
+    public List<List<String>> groupStrings(String[] strings) {
+        List<List<String>> result = new ArrayList<List<String>>();
+        HashMap<String, ArrayList<String>> map 
+                    = new HashMap<String, ArrayList<String>>();
+        
+        for(String s : strings){
+            char [] arr = s.toCharArray();
+            if(arr.length > 0){
+                int diff = arr[0]-'a';
+                for(int i = 0; i < arr.length ; i ++){
+                    if(arr[i] - diff < 'a'){
+                        arr[i] = (char) (arr[i] - diff + 26);
+                    }else{
+                        arr[i] = (char) (arr[i] - diff);
+                    }
+                }
+            }
+            String ns = new String(arr);
+            if(map.containsKey(ns)){
+                map.get(ns).add(s);
+            }else{
+                ArrayList<String> al = new ArrayList<String>();
+                al.add(s);
+                map.put(ns, al);
+            }
+
+        }
+    
+        for(Map.Entry<String, ArrayList<String>> entry: map.entrySet()){
+            Collections.sort(entry.getValue());
+        }
+ 
+        result.addAll(map.values());
+ 
+        return result;
+    }
+}
+```
+
+
+```
+Given a 2d grid map of '1's (land) and '0's (water), count the number of islands. An island is surrounded by water and is formed by connecting adjacent lands horizontally or vertically. You may assume all four edges of the grid are all surrounded by water.
+
+Example 1:
+
+Input:
+11110
+11010
+11000
+00000
+
+Output: 1
+
+Example 2:
+
+Input:
+11000
+11000
+00100
+00011
+
+Output: 3
+
+```
+
+
+```
+class Solution {
+    public int numIslands(char[][] grid) {
+        if(grid == null || grid.length == 0)
+            return 0;
+        int numIsLands = 0;
+        for(int i = 0; i < grid.length ; i++){
+            for(int j = 0 ; j < grid[i].length ; j++){
+                if(grid[i][j] == '1'){
+                    numIsLands += dfs(grid, i, j);
+                }
+            }
+        }
+        return numIsLands;
+    }
+    
+    public int dfs(char[][] grid, int i , int j){
+        if(i < 0 || j >= grid.length || j < 0 || j >= grid[i].length || grid[i][j] == '0')
+            return 0;
+        
+        grid[i][j] = '0';
+        dfs(grid, i+1, j);
+        dfs(grid, i-1, j);
+        dfs(grid, i, j+1);
+        dfs(grid, i, j-1);
+        return 1;
+    }
+}
+```
+
+
+```
+Given a 2d grid map of '1's (land) and '0's (water), count the number of islands. An island is surrounded by water and is formed by connecting adjacent lands horizontally or vertically. You may assume all four edges of the grid are all surrounded by water.
+
+Example 1:
+
+Input:
+11110
+11010
+11000
+00000
+
+Output: 1
+
+Example 2:
+
+Input:
+11000
+11000
+00100
+00011
+
+Output: 3
+```
+
+```
+class Solution {
+    public int numIslands(char[][] grid) {
+        if(grid == null || grid.length == 0)
+            return 0;
+        int numIsLands = 0;
+        for(int i = 0; i < grid.length ; i++){
+            for(int j = 0 ; j < grid[i].length ; j++){
+                if(grid[i][j] == '1'){
+                    numIsLands += dfs(grid, i, j);
+                }
+            }
+        }
+        return numIsLands;
+    }
+    
+    public int dfs(char[][] grid, int i , int j){
+        if(i < 0 || i >= grid.length || j < 0 || j >= grid[0].length || grid[i][j] == '0')
+            return 0;
+        
+        grid[i][j] = '0';
+        dfs(grid, i+1, j);
+        dfs(grid, i-1, j);
+        dfs(grid, i, j+1);
+        dfs(grid, i, j-1);
+        return 1;
+    }
+}
+```
+
+```
+Given a rows x cols screen and a sentence represented by a list of non-empty words, find how many times the given sentence can be fitted on the screen.
+
+Note:
+
+    A word cannot be split into two lines.
+    The order of words in the sentence must remain unchanged.
+    Two consecutive words in a line must be separated by a single space.
+    Total words in the sentence won't exceed 100.
+    Length of each word is greater than 0 and won't exceed 10.
+    1 ≤ rows, cols ≤ 20,000.
+
+Example 1:
+
+Input:
+rows = 2, cols = 8, sentence = ["hello", "world"]
+
+Output: 
+1
+
+Explanation:
+hello---
+world---
+
+The character '-' signifies an empty space on the screen.
+
+Example 2:
+
+Input:
+rows = 3, cols = 6, sentence = ["a", "bcd", "e"]
+
+Output: 
+2
+
+Explanation:
+a-bcd- 
+e-a---
+bcd-e-
+
+The character '-' signifies an empty space on the screen.
+
+Example 3:
+
+Input:
+rows = 4, cols = 5, sentence = ["I", "had", "apple", "pie"]
+
+Output: 
+1
+
+Explanation:
+I-had
+apple
+pie-I
+had--
+
+The character '-' signifies an empty space on the screen.
+
+```
+
+```
+class Solution {
+    public int wordsTyping(String[] sentence, int rows, int cols) {
+        String sen = String.join(" ", sentence) + " ";
+        int len = sen.length();
+        int total = 0;
+        
+        for(int i= 0 ; i < rows ; i++){
+            total += cols;
+            if(sen.charAt(total%len) == ' '){
+                total++;
+            }else{
+                while(total > 0 && sen.charAt((total-1)%len) != ' '){
+                    total--;
+                }
+            }
+        }
+        return total/len;
+    }
+}
+
+```
+
+```
+Initially, the 2d grid grid is filled with water. (Assume 0 represents water and 1 represents land).
+
+0 0 0
+0 0 0
+0 0 0
+
+Operation #1: addLand(0, 0) turns the water at grid[0][0] into a land.
+
+1 0 0
+0 0 0   Number of islands = 1
+0 0 0
+
+Operation #2: addLand(0, 1) turns the water at grid[0][1] into a land.
+
+1 1 0
+0 0 0   Number of islands = 1
+0 0 0
+
+Operation #3: addLand(1, 2) turns the water at grid[1][2] into a land.
+
+1 1 0
+0 0 1   Number of islands = 2
+0 0 0
+
+Operation #4: addLand(2, 1) turns the water at grid[2][1] into a land.
+
+1 1 0
+0 0 1   Number of islands = 3
+0 1 0
+
+Follow up:
+
+Can you do it in time complexity O(k log mn), where k is the length of the positions?
+```
+
+```
+class Solution {
+    public List<Integer> numIslands2(int m, int n, int[][] positions) {
+    int[] parent = new int[m * n];
+    Arrays.fill(parent,-1);
+ 
+    ArrayList<Integer> result = new ArrayList<>();
+ 
+    int[] dx = {-1, 0, 1, 0};
+    int[] dy = {0, 1, 0, -1};
+ 
+    int count = 0;
+    for (int[] position : positions) {
+        count++;
+        int idx = n * position[0] + position[1];
+ 
+        if (parent[idx] == -1) {
+            parent[idx] = idx;
+        }
+ 
+        for (int k = 0; k < 4; k++) {
+            int x = position[0] + dx[k];
+            int y = position[1] + dy[k];
+ 
+            int idxNeighbor = n * x + y;
+ 
+            if (x >= 0 && x < m && y >= 0 && y < n && parent[idxNeighbor] != -1) {
+                int p = getParent(parent, idxNeighbor);
+ 
+                //set neighor's parent to be current idx
+                if (parent[p] != idx) {
+                    parent[p] = idx;
+                    count--;
+                }
+            }
+        }
+ 
+        result.add(count);
+    }
+ 
+    return result;
+}
+ 
+private int getParent(int[] parent, int i) {
+    while (parent[i] != i) {
+        i = parent[i];
+    }
+ 
+    return i;
+}
+}
+
+```
