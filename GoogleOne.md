@@ -3587,3 +3587,195 @@ class Solution {
 }
 
 ```
+
+```
+Let's call an array A a mountain if the following properties hold:
+
+    A.length >= 3
+    There exists some 0 < i < A.length - 1 such that A[0] < A[1] < ... A[i-1] < A[i] > A[i+1] > ... > A[A.length - 1]
+
+Given an array that is definitely a mountain, return any i such that A[0] < A[1] < ... A[i-1] < A[i] > A[i+1] > ... > A[A.length - 1].
+
+Example 1:
+
+Input: [0,1,0]
+Output: 1
+
+Example 2:
+
+Input: [0,2,1,0]
+Output: 1
+
+Note:
+
+    3 <= A.length <= 10000
+    0 <= A[i] <= 10^6
+    A is a mountain, as defined above.
+
+```
+
+
+```
+class Solution {
+    public int peakIndexInMountainArray(int[] A) {
+        int lo = 0, hi = A.length - 1;
+        while(lo < hi){
+            int mi = lo + (hi-lo)/2;
+            if(A[mi] < A[mi+1]){
+                lo = mi + 1;
+            }else{
+                hi = mi;
+            }
+        }
+        return lo;
+    }
+}
+```
+
+```
+(This problem is an interactive problem.)
+
+You may recall that an array A is a mountain array if and only if:
+
+    A.length >= 3
+    There exists some i with 0 < i < A.length - 1 such that:
+        A[0] < A[1] < ... A[i-1] < A[i]
+        A[i] > A[i+1] > ... > A[A.length - 1]
+
+Given a mountain array mountainArr, return the minimum index such that mountainArr.get(index) == target.  If such an index doesn't exist, return -1.
+
+You can't access the mountain array directly.  You may only access the array using a MountainArray interface:
+
+    MountainArray.get(k) returns the element of the array at index k (0-indexed).
+    MountainArray.length() returns the length of the array.
+
+Submissions making more than 100 calls to MountainArray.get will be judged Wrong Answer.  Also, any solutions that attempt to circumvent the judge will result in disqualification.
+
+ 
+
+Example 1:
+
+Input: array = [1,2,3,4,5,3,1], target = 3
+Output: 2
+Explanation: 3 exists in the array, at index=2 and index=5. Return the minimum index, which is 2.
+
+Example 2:
+
+Input: array = [0,1,2,4,2,1], target = 3
+Output: -1
+Explanation: 3 does not exist in the array, so we return -1.
+
+```
+
+```
+/**
+ * // This is MountainArray's API interface.
+ * // You should not implement it, or speculate about its implementation
+ * interface MountainArray {
+ *     public int get(int index) {}
+ *     public int length() {}
+ * }
+ */
+ 
+class Solution {
+    public int findInMountainArray(int target, MountainArray mountainArr) {
+        int peakIndex = peakIndexInMountainArray(mountainArr);
+        int left = 0, right = peakIndex;
+        while (left < right) {
+            int mid = left + (right - left >> 1);
+            if (mountainArr.get(mid) >= target) {
+                right = mid;
+            } else {
+                left = mid + 1;
+            }
+        }
+        if (mountainArr.get(left) == target) {
+            return left;
+        }
+
+        left = peakIndex;
+        right = mountainArr.length();
+        while (left < right) {
+            int mid = left + (right - left >> 1);
+            if (mountainArr.get(mid) <= target) {
+                right = mid;
+            } else {
+                left = mid + 1;
+            }
+        }
+        return left < mountainArr.length() && mountainArr.get(left) == target ? left : -1;
+    }
+    
+    private int peakIndexInMountainArray(MountainArray arr) {
+        int left = 0, right = arr.length() - 1;
+        while (left < right) {
+            int mid = left + (right - left >> 1);
+            if (arr.get(mid) < arr.get(mid + 1)) {
+                left = mid + 1;
+            } else {
+                right = mid;
+            }
+        }
+        return left;
+    }
+}
+
+```
+
+```
+Given the root of a binary tree, each node in the tree has a distinct value.
+
+After deleting all nodes with a value in to_delete, we are left with a forest (a disjoint union of trees).
+
+Return the roots of the trees in the remaining forest.  You may return the result in any order.
+
+ 
+
+Example 1:
+
+Input: root = [1,2,3,4,5,6,7], to_delete = [3,5]
+Output: [[1,2,null,4],[6],[7]]
+
+ 
+
+Constraints:
+
+    The number of nodes in the given tree is at most 1000.
+    Each node has a distinct value between 1 and 1000.
+    to_delete.length <= 1000
+    to_delete contains distinct values between 1 and 1000.
+```
+
+```
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    List<TreeNode> list = new ArrayList<>();
+    Set<Integer> set = new HashSet<>();
+    public List<TreeNode> delNodes(TreeNode root, int[] to_delete) {
+        for(int i : to_delete){
+            set.add(i);
+        }
+        
+        root = delete(root, true);
+        return list;
+    }
+    
+    private TreeNode delete(TreeNode node, boolean isRoot){
+        if(node == null) return null;
+        
+        boolean delete = set.contains(node.val);
+        if(isRoot && !delete) list.add(node);
+        node.left = delete(node.left, delete);
+        node.right = delete(node.right, delete);
+        return delete ? null : node;
+    }
+}
+```
