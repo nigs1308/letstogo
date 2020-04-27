@@ -2218,3 +2218,286 @@ public class Solution extends VersionControl {
 }
 
 ```
+
+```
+Add and Search Word - Data structure design
+
+Design a data structure that supports the following two operations:
+
+void addWord(word)
+bool search(word)
+
+search(word) can search a literal word or a regular expression string containing only letters a-z or .. A . means it can represent any one letter.
+
+Example:
+
+addWord("bad")
+addWord("dad")
+addWord("mad")
+search("pad") -> false
+search("bad") -> true
+search(".ad") -> true
+search("b..") -> true
+
+Note:
+You may assume that all words are consist of lowercase letters a-z.
+
+```
+
+```java
+class WordDictionary {
+    private TrieNode root;
+    /** Initialize your data structure here. */
+    public WordDictionary() {
+        root = new TrieNode();
+    }
+    
+    /** Adds a word into the data structure. */
+    public void addWord(String word) {
+        Map<Character, TrieNode> children = root.children;
+        for(int i = 0 ; i < word.length(); i ++){
+            char c = word.charAt(i);
+            TrieNode t = null;
+            if(children.containsKey(c)){
+                t = children.get(c);
+            }else{
+                t = new TrieNode(c);
+                children.put(c,t);
+            }
+            children = t.children;
+            if(i == word.length() - 1){
+                t.isLeaf = true;
+            }
+        }
+    }
+    
+    /** Returns if the word is in the data structure. A word could contain the dot character '.' to represent any one letter. */
+    public boolean search(String word) {
+        return dfs(root.children, word, 0);
+    }
+    
+    public boolean dfs(Map<Character, TrieNode> children, String word, int start){
+        if(start == word.length()){
+            if(children.size() == 0){
+                return true;
+            }else{
+                return false;
+            }
+        }
+        
+        char c = word.charAt(start);
+        if(children.containsKey(c)){
+            if(start == word.length() -1 && children.get(c).isLeaf){
+                return true;
+            }
+            return dfs(children.get(c).children, word, start + 1);
+        }else if(c == '.'){
+            boolean result = false;
+            for(Map.Entry<Character, TrieNode> child: children.entrySet()){
+                if(start == word.length() - 1 && child.getValue().isLeaf){
+                    return true;
+                }
+                
+                if(dfs(child.getValue().children, word, start+1)){
+                    result = true;
+                }
+            }
+            return result;
+        }else{
+            return false;
+        }
+    }
+    
+    class TrieNode{
+        char c;
+        Map<Character, TrieNode> children = new HashMap<>();
+        boolean isLeaf;
+        public TrieNode(){
+            
+        }
+        
+        public TrieNode(char c){
+            this.c = c;
+        }
+    }
+}
+
+/**
+ * Your WordDictionary object will be instantiated and called as such:
+ * WordDictionary obj = new WordDictionary();
+ * obj.addWord(word);
+ * boolean param_2 = obj.search(word);
+ */
+ 
+ ```
+ 
+ ```
+ Number of Islands
+
+Given a 2d grid map of '1's (land) and '0's (water), count the number of islands. An island is surrounded by water and is formed by connecting adjacent lands horizontally or vertically. You may assume all four edges of the grid are all surrounded by water.
+
+Example 1:
+
+Input:
+11110
+11010
+11000
+00000
+
+Output: 1
+
+Example 2:
+
+Input:
+11000
+11000
+00100
+00011
+
+Output: 3
+
+```
+
+```java
+class Solution {
+    public int numIslands(char[][] grid) {
+        if(grid == null || grid.length == 0)
+            return 0;
+        
+        int numIsLands = 0;
+        for(int i = 0 ; i < grid.length ; i ++){
+            for(int j = 0 ; j < grid[i].length; j++){
+                if(grid[i][j] == '1'){
+                    numIsLands += dfs(grid, i, j);
+                }
+            }
+        }
+        return numIsLands;
+    }
+    
+    public int dfs(char [][] grid, int i , int j){
+        if(i < 0 || i >= grid.length || j < 0 || j >= grid[i].length || grid[i][j] == '0')
+            return 0;
+        grid[i][j] = '0'; // mark it as visited
+        dfs(grid, i+1, j);
+        dfs(grid, i-1, j);
+        dfs(grid, i, j-1);
+        dfs(grid, i, j+1);
+        return 1;
+    }
+}
+
+```
+
+```
+Remove Invalid Parentheses
+
+Remove the minimum number of invalid parentheses in order to make the input string valid. Return all possible results.
+
+Note: The input string may contain letters other than the parentheses ( and ).
+
+Example 1:
+
+Input: "()())()"
+Output: ["()()()", "(())()"]
+
+Example 2:
+
+Input: "(a)())()"
+Output: ["(a)()()", "(a())()"]
+
+Example 3:
+
+Input: ")("
+Output: [""]
+
+```
+
+```java
+class Solution {
+      private Set<String> validExpressions = new HashSet<String>();
+
+  private void recurse(
+      String s,
+      int index,
+      int leftCount,
+      int rightCount,
+      int leftRem,
+      int rightRem,
+      StringBuilder expression) {
+
+    // If we reached the end of the string, just check if the resulting expression is
+    // valid or not and also if we have removed the total number of left and right
+    // parentheses that we should have removed.
+    if (index == s.length()) {
+      if (leftRem == 0 && rightRem == 0) {
+        this.validExpressions.add(expression.toString());
+      }
+
+    } else {
+      char character = s.charAt(index);
+      int length = expression.length();
+
+      // The discard case. Note that here we have our pruning condition.
+      // We don't recurse if the remaining count for that parenthesis is == 0.
+      if ((character == '(' && leftRem > 0) || (character == ')' && rightRem > 0)) {
+        this.recurse(
+            s,
+            index + 1,
+            leftCount,
+            rightCount,
+            leftRem - (character == '(' ? 1 : 0),
+            rightRem - (character == ')' ? 1 : 0),
+            expression);
+      }
+
+      expression.append(character);
+
+      // Simply recurse one step further if the current character is not a parenthesis.
+      if (character != '(' && character != ')') {
+
+        this.recurse(s, index + 1, leftCount, rightCount, leftRem, rightRem, expression);
+
+      } else if (character == '(') {
+
+        // Consider an opening bracket.
+        this.recurse(s, index + 1, leftCount + 1, rightCount, leftRem, rightRem, expression);
+
+      } else if (rightCount < leftCount) {
+
+        // Consider a closing bracket.
+        this.recurse(s, index + 1, leftCount, rightCount + 1, leftRem, rightRem, expression);
+      }
+
+      // Delete for backtracking.
+      expression.deleteCharAt(length);
+    }
+  }
+
+  public List<String> removeInvalidParentheses(String s) {
+
+    int left = 0, right = 0;
+
+    // First, we find out the number of misplaced left and right parentheses.
+    for (int i = 0; i < s.length(); i++) {
+
+      // Simply record the left one.
+      if (s.charAt(i) == '(') {
+        left++;
+      } else if (s.charAt(i) == ')') {
+        // If we don't have a matching left, then this is a misplaced right, record it.
+        right = left == 0 ? right + 1 : right;
+
+        // Decrement count of left parentheses because we have found a right
+        // which CAN be a matching one for a left.
+        left = left > 0 ? left - 1 : left;
+      }
+    }
+
+    this.recurse(s, 0, 0, 0, left, right, new StringBuilder());
+    return new ArrayList<String>(this.validExpressions);
+  }
+}
+
+```
+
