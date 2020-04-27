@@ -1958,3 +1958,219 @@ class Solution {
 }
 
 ```
+
+```
+Find All Anagrams in a String
+
+Given a string s and a non-empty string p, find all the start indices of p's anagrams in s.
+
+Strings consists of lowercase English letters only and the length of both strings s and p will not be larger than 20,100.
+
+The order of output does not matter.
+
+Example 1:
+
+Input:
+s: "cbaebabacd" p: "abc"
+
+Output:
+[0, 6]
+
+Explanation:
+The substring with start index = 0 is "cba", which is an anagram of "abc".
+The substring with start index = 6 is "bac", which is an anagram of "abc".
+
+Example 2:
+
+Input:
+s: "abab" p: "ab"
+
+Output:
+[0, 1, 2]
+
+Explanation:
+The substring with start index = 0 is "ab", which is an anagram of "ab".
+The substring with start index = 1 is "ba", which is an anagram of "ab".
+The substring with start index = 2 is "ab", which is an anagram of "ab".
+
+```
+
+```
+class Solution {
+    public List<Integer> findAnagrams(String s, String p) {
+        List<Integer> ans = new ArrayList<>();
+        if(s == null || s.length() == 0 || s.length() < p.length())
+            return ans;
+        
+        Map<Character, Integer> map = new HashMap<>();
+        for(char c : p.toCharArray()){
+            map.put(c, map.getOrDefault(c, 0) +1);
+        }
+        
+        int counter = map.size();
+        for(int left =0, right = 0; right < s.length() ; right ++){
+            char cRight = s.charAt(right);
+            if(map.containsKey(cRight)){
+                map.put(cRight, map.get(cRight) -1 );
+                if(map.get(cRight) == 0)
+                    counter -= 1;
+            }
+            while(counter <= 0){
+                char cLeft = s.charAt(left);
+                if (map.containsKey(cLeft)) {
+                    map.put(cLeft, map.get(cLeft) + 1);
+                    if (map.get(cLeft) > 0) {
+                        counter += 1;
+                    }
+                }
+                if (right - left + 1 == p.length()) {
+                    ans.add(left);
+                }
+                left++;
+            }
+        }
+        return ans;
+    }
+}
+
+```
+
+```
+Lowest Common Ancestor of Deepest Leaves
+
+Given a rooted binary tree, return the lowest common ancestor of its deepest leaves.
+
+Recall that:
+
+    The node of a binary tree is a leaf if and only if it has no children
+    The depth of the root of the tree is 0, and if the depth of a node is d, the depth of each of its children is d+1.
+    The lowest common ancestor of a set S of nodes is the node A with the largest depth such that every node in S is in the subtree with root A.
+
+ 
+
+Example 1:
+
+Input: root = [1,2,3]
+Output: [1,2,3]
+Explanation: 
+The deepest leaves are the nodes with values 2 and 3.
+The lowest common ancestor of these leaves is the node with value 1.
+The answer returned is a TreeNode object (not an array) with serialization "[1,2,3]".
+
+Example 2:
+
+Input: root = [1,2,3,4]
+Output: [4]
+
+Example 3:
+
+Input: root = [1,2,3,4,5]
+Output: [2,4,5]
+
+ 
+
+Constraints:
+
+    The given tree will have between 1 and 1000 nodes.
+    Each node of the tree will have a distinct value between 1 and 1000.
+
+```
+
+```
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    int deepest  = 0;
+    TreeNode lca;
+    public TreeNode lcaDeepestLeaves(TreeNode root) {
+        lcaDeepestLeaves(root, 0);
+        return lca;
+    }
+    
+    public int lcaDeepestLeaves(TreeNode node, int depth){
+        deepest = Math.max(deepest, depth);
+        if(node == null)
+            return depth;
+        int left = lcaDeepestLeaves(node.left, depth+1);
+        int right = lcaDeepestLeaves(node.right, depth+1);
+        if(left ==  deepest && right == deepest){
+            lca  = node;
+        }
+        return Math.max(left, right);
+    }
+}
+
+```
+
+
+```
+Partition Equal Subset Sum
+
+Given a non-empty array containing only positive integers, find if the array can be partitioned into two subsets such that the sum of elements in both subsets is equal.
+
+Note:
+
+    Each of the array element will not exceed 100.
+    The array size will not exceed 200.
+
+ 
+
+Example 1:
+
+Input: [1, 5, 11, 5]
+
+Output: true
+
+Explanation: The array can be partitioned as [1, 5, 5] and [11].
+
+ 
+
+Example 2:
+
+Input: [1, 2, 3, 5]
+
+Output: false
+
+Explanation: The array cannot be partitioned into equal sum subsets.
+
+```
+
+```
+class Solution {
+    public boolean canPartition(int[] nums) {
+        int total = 0;
+        for(int i : nums)
+            total += i;
+        if(total % 2 != 0)
+            return false;
+        
+        return canPartition(nums, 0, 0, total, new HashMap<String, Boolean>());
+    }
+    
+    public boolean canPartition(int [] nums, int index, int sum, int total, HashMap<String, Boolean> state){
+        String current = index + "" + sum;
+        if(state.containsKey(current)){
+            return state.get(current);
+        }
+        
+        if(sum * 2 == total)
+            return true;
+        
+        if(sum > total/2 || index >= nums.length){
+            return false;
+        }
+        
+        boolean foundPartition =  canPartition(nums, index+1, sum, total, state) ||
+            canPartition(nums, index+1, sum+nums[index], total, state);
+        state.put(current, foundPartition);
+        return foundPartition;
+    }
+  }
+ ```
