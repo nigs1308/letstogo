@@ -2501,3 +2501,263 @@ class Solution {
 
 ```
 
+```
+Monotonic Array
+
+An array is monotonic if it is either monotone increasing or monotone decreasing.
+
+An array A is monotone increasing if for all i <= j, A[i] <= A[j].  An array A is monotone decreasing if for all i <= j, A[i] >= A[j].
+
+Return true if and only if the given array A is monotonic.
+
+ 
+
+Example 1:
+
+Input: [1,2,2,3]
+Output: true
+
+Example 2:
+
+Input: [6,5,4,4]
+Output: true
+
+Example 3:
+
+Input: [1,3,2]
+Output: false
+
+Example 4:
+
+Input: [1,2,4,5]
+Output: true
+
+Example 5:
+
+Input: [1,1,1]
+Output: true
+
+ 
+
+Note:
+
+    1 <= A.length <= 50000
+    -100000 <= A[i] <= 100000
+
+```
+
+```java
+class Solution {
+    public boolean isMonotonic(int[] A) {
+        boolean increasing = true;
+        boolean decreasing = true;
+        
+        for(int i = 0 ; i < A.length - 1; ++i){
+            if(A[i] > A[i+1])
+                increasing = false;
+            
+            if(A[i] < A[i+1])
+                decreasing = false;
+        }
+        return increasing || decreasing;
+    }
+}
+```
+
+```
+Interval List Intersections
+
+Given two lists of closed intervals, each list of intervals is pairwise disjoint and in sorted order.
+
+Return the intersection of these two interval lists.
+
+(Formally, a closed interval [a, b] (with a <= b) denotes the set of real numbers x with a <= x <= b.  The intersection of two closed intervals is a set of real numbers that is either empty, or can be represented as a closed interval.  For example, the intersection of [1, 3] and [2, 4] is [2, 3].)
+
+ 
+
+Example 1:
+
+Input: A = [[0,2],[5,10],[13,23],[24,25]], B = [[1,5],[8,12],[15,24],[25,26]]
+Output: [[1,2],[5,5],[8,10],[15,23],[24,24],[25,25]]
+Reminder: The inputs and the desired output are lists of Interval objects, and not arrays or lists.
+
+ 
+
+Note:
+
+    0 <= A.length < 1000
+    0 <= B.length < 1000
+    0 <= A[i].start, A[i].end, B[i].start, B[i].end < 10^9
+
+NOTE: input types have been changed on April 15, 2019. Please reset to default code definition to get new method signature.
+
+```
+
+```java
+class Solution {
+    public int[][] intervalIntersection(int[][] A, int[][] B) {
+        List<int[]> ans = new ArrayList();
+        int i = 0, j = 0;
+        while(i < A.length && j < B.length){
+            int lo = Math.max(A[i][0], B[j][0]);
+            int hi = Math.min(A[i][1], B[j][1]);
+            
+            if(lo <= hi){
+                ans.add(new int[]{lo, hi});
+            }
+            if(A[i][1] < B[j][1]){
+                i++;
+            }else{
+                j++;
+            }
+        }
+        return ans.toArray(new int [ans.size()][]);
+    }
+}
+```
+
+```
+Decode Ways
+
+A message containing letters from A-Z is being encoded to numbers using the following mapping:
+
+'A' -> 1
+'B' -> 2
+...
+'Z' -> 26
+
+Given a non-empty string containing only digits, determine the total number of ways to decode it.
+
+Example 1:
+
+Input: "12"
+Output: 2
+Explanation: It could be decoded as "AB" (1 2) or "L" (12).
+
+Example 2:
+
+Input: "226"
+Output: 3
+Explanation: It could be decoded as "BZ" (2 26), "VF" (22 6), or "BBF" (2 2 6).
+
+
+```
+
+```java
+class Solution {
+    public int numDecodings(String s) {
+        int [] dp = new int[s.length()+1];
+        dp[0] = 1;
+        
+        if(s.charAt(0) == '0'){
+            return 0;
+        }
+        
+        dp[1] = 1;
+        
+        for(int i = 1; i < s.length(); i++){
+            char c = s.charAt(i);
+            char p = s.charAt(i-1);
+            
+            if(c == '0' && (p == '0' || p > '2')){
+                return 0;
+            }
+            
+            if(p == '0'){
+                dp[i+1] = dp[i];
+            }else if (p == '1'){
+                if(c == '0'){
+                    dp[i+1] = dp[i-1];
+                }else{
+                    dp[i+1] = dp[i-1] + dp[i];
+                }
+            }else if(p == '2'){
+                if(c == '0'){
+                    dp[i+1] = dp[i-1];
+                }else if(c <= '6'){
+                    dp[i+1] = dp[i] + dp[i-1];
+                }else{
+                    dp[i+1] = dp[i];
+                }
+            }else{
+                dp[i+1] = dp[i];
+            }
+        }
+        return dp[s.length()];
+    }
+}
+```
+
+
+```
+Accounts Merge
+
+Given a list accounts, each element accounts[i] is a list of strings, where the first element accounts[i][0] is a name, and the rest of the elements are emails representing emails of the account.
+
+Now, we would like to merge these accounts. Two accounts definitely belong to the same person if there is some email that is common to both accounts. Note that even if two accounts have the same name, they may belong to different people as people could have the same name. A person can have any number of accounts initially, but all of their accounts definitely have the same name.
+
+After merging the accounts, return the accounts in the following format: the first element of each account is the name, and the rest of the elements are emails in sorted order. The accounts themselves can be returned in any order.
+
+Example 1:
+
+Input: 
+accounts = [["John", "johnsmith@mail.com", "john00@mail.com"], ["John", "johnnybravo@mail.com"], ["John", "johnsmith@mail.com", "john_newyork@mail.com"], ["Mary", "mary@mail.com"]]
+Output: [["John", 'john00@mail.com', 'john_newyork@mail.com', 'johnsmith@mail.com'],  ["John", "johnnybravo@mail.com"], ["Mary", "mary@mail.com"]]
+Explanation: 
+The first and third John's are the same person as they have the common email "johnsmith@mail.com".
+The second John and Mary are different people as none of their email addresses are used by other accounts.
+We could return these lists in any order, for example the answer [['Mary', 'mary@mail.com'], ['John', 'johnnybravo@mail.com'], 
+['John', 'john00@mail.com', 'john_newyork@mail.com', 'johnsmith@mail.com']] would still be accepted.
+
+Note:
+The length of accounts will be in the range [1, 1000].
+The length of accounts[i] will be in the range [1, 10].
+The length of accounts[i][j] will be in the range [1, 30].
+```
+
+```java
+class Solution {
+public List<List<String>> accountsMerge(List<List<String>> accounts) {
+        Map<String, String> emailToName = new HashMap();
+        Map<String, ArrayList<String>> graph = new HashMap();
+        for (List<String> account: accounts) {
+            String name = "";
+            for (String email: account) {
+                if (name == "") {
+                    name = email;
+                    continue;
+                }
+                graph.computeIfAbsent(email, x-> new ArrayList<String>()).add(account.get(1));
+                graph.computeIfAbsent(account.get(1), x-> new ArrayList<String>()).add(email);
+                emailToName.put(email, name);
+            }
+        }
+
+        Set<String> seen = new HashSet();
+        List<List<String>> ans = new ArrayList();
+        for (String email: graph.keySet()) {
+            if (!seen.contains(email)) {
+                seen.add(email);
+                Stack<String> stack = new Stack();
+                stack.push(email);
+                List<String> component = new ArrayList();
+                while (!stack.empty()) {
+                    String node = stack.pop();
+                    component.add(node);
+                    for (String nei: graph.get(node)) {
+                        if (!seen.contains(nei)) {
+                            seen.add(nei);
+                            stack.push(nei);
+                        }
+                    }
+                }
+                Collections.sort(component);
+                component.add(0, emailToName.get(email));
+                ans.add(component);
+            }
+        }
+        return ans;
+    }
+}
+```
+
