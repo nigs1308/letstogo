@@ -4344,3 +4344,191 @@ class Solution {
 }
 
 ```
+
+```
+Given an array A of integers, return true if and only if it is a valid mountain array.
+
+Recall that A is a mountain array if and only if:
+
+    A.length >= 3
+    There exists some i with 0 < i < A.length - 1 such that:
+        A[0] < A[1] < ... A[i-1] < A[i]
+        A[i] > A[i+1] > ... > A[A.length - 1]
+
+
+ 
+
+Example 1:
+
+Input: [2,1]
+Output: false
+
+Example 2:
+
+Input: [3,5,5]
+Output: false
+
+Example 3:
+
+Input: [0,3,2,1]
+Output: true
+
+ 
+
+Note:
+
+    0 <= A.length <= 10000
+    0 <= A[i] <= 10000 
+
+```
+
+```java
+class Solution {
+    public boolean validMountainArray(int[] A) {
+        if(A == null || A.length < 3)
+            return false;
+        
+        int peak = 0;
+        while(peak + 1 < A.length){
+            if(A[peak+1] <= A[peak]){
+                break;
+            }
+            peak++;
+        }
+        
+        if(peak == 0 || peak == A.length - 1){
+            return false;
+        }
+        while(peak + 1 < A.length){
+            if(A[peak] <= A[peak+1]){
+                return false;
+            }
+            peak++;
+        }
+        return true;
+    }
+}
+```
+
+```
+Minimum Area Rectangle
+
+Given a set of points in the xy-plane, determine the minimum area of a rectangle formed from these points, with sides parallel to the x and y axes.
+
+If there isn't any rectangle, return 0.
+
+ 
+
+Example 1:
+
+Input: [[1,1],[1,3],[3,1],[3,3],[2,2]]
+Output: 4
+
+Example 2:
+
+Input: [[1,1],[1,3],[3,1],[3,3],[4,1],[4,3]]
+Output: 2
+
+ 
+
+Note:
+
+    1 <= points.length <= 500
+    0 <= points[i][0] <= 40000
+    0 <= points[i][1] <= 40000
+    All points are distinct.
+
+```
+
+```java
+class Solution {
+    public int minAreaRect(int[][] points) {
+        Set<Integer> pointSet = new HashSet();
+        for (int[] point: points)
+            pointSet.add(40001 * point[0] + point[1]);
+
+        int ans = Integer.MAX_VALUE;
+        for (int i = 0; i < points.length; ++i)
+            for (int j = i+1; j < points.length; ++j) {
+                if (points[i][0] != points[j][0] && points[i][1] != points[j][1]) {
+                    if (pointSet.contains(40001 * points[i][0] + points[j][1]) &&
+                            pointSet.contains(40001 * points[j][0] + points[i][1])) {
+                        ans = Math.min(ans, Math.abs(points[j][0] - points[i][0]) *
+                                            Math.abs(points[j][1] - points[i][1]));
+                    }
+                }
+            }
+
+        return ans < Integer.MAX_VALUE ? ans : 0;
+    }
+}
+```
+
+```
+My Calendar II
+
+Implement a MyCalendarTwo class to store your events. A new event can be added if adding the event will not cause a triple booking.
+
+Your class will have one method, book(int start, int end). Formally, this represents a booking on the half open interval [start, end), the range of real numbers x such that start <= x < end.
+
+A triple booking happens when three events have some non-empty intersection (ie., there is some time that is common to all 3 events.)
+
+For each call to the method MyCalendar.book, return true if the event can be added to the calendar successfully without causing a triple booking. Otherwise, return false and do not add the event to the calendar.
+Your class will be called like this: MyCalendar cal = new MyCalendar(); MyCalendar.book(start, end)
+
+Example 1:
+
+MyCalendar();
+MyCalendar.book(10, 20); // returns true
+MyCalendar.book(50, 60); // returns true
+MyCalendar.book(10, 40); // returns true
+MyCalendar.book(5, 15); // returns false
+MyCalendar.book(5, 10); // returns true
+MyCalendar.book(25, 55); // returns true
+Explanation: 
+The first two events can be booked.  The third event can be double booked.
+The fourth event (5, 15) can't be booked, because it would result in a triple booking.
+The fifth event (5, 10) can be booked, as it does not use time 10 which is already double booked.
+The sixth event (25, 55) can be booked, as the time in [25, 40) will be double booked with the third event;
+the time [40, 50) will be single booked, and the time [50, 55) will be double booked with the second event.
+
+ 
+
+Note:
+
+    The number of calls to MyCalendar.book per test case will be at most 1000.
+    In calls to MyCalendar.book(start, end), start and end are integers in the range [0, 10^9].
+
+```
+
+
+```java
+class MyCalendarTwo {
+
+    List<int[]> calendar;
+    List<int[]> overlaps;
+
+    MyCalendarTwo() {
+        calendar = new ArrayList();
+        overlaps = new ArrayList();
+    }
+
+    public boolean book(int start, int end) {
+        for (int[] iv: overlaps) {
+            if (iv[0] < end && start < iv[1]) return false;
+        }
+        for (int[] iv: calendar) {
+            if (iv[0] < end && start < iv[1])
+                overlaps.add(new int[]{Math.max(start, iv[0]), Math.min(end, iv[1])});
+        }
+        calendar.add(new int[]{start, end});
+        return true;
+    }
+}
+
+/**
+ * Your MyCalendarTwo object will be instantiated and called as such:
+ * MyCalendarTwo obj = new MyCalendarTwo();
+ * boolean param_1 = obj.book(start,end);
+ */
+ ```
