@@ -3014,3 +3014,301 @@ class Solution {
     }
 }
 ```
+
+```
+Regular Expression Matching
+
+Given an input string (s) and a pattern (p), implement regular expression matching with support for '.' and '*'.
+
+'.' Matches any single character.
+'*' Matches zero or more of the preceding element.
+
+The matching should cover the entire input string (not partial).
+
+Note:
+
+    s could be empty and contains only lowercase letters a-z.
+    p could be empty and contains only lowercase letters a-z, and characters like . or *.
+
+Example 1:
+
+Input:
+s = "aa"
+p = "a"
+Output: false
+Explanation: "a" does not match the entire string "aa".
+
+Example 2:
+
+Input:
+s = "aa"
+p = "a*"
+Output: true
+Explanation: '*' means zero or more of the preceding element, 'a'. Therefore, by repeating 'a' once, it becomes "aa".
+
+Example 3:
+
+Input:
+s = "ab"
+p = ".*"
+Output: true
+Explanation: ".*" means "zero or more (*) of any character (.)".
+
+Example 4:
+
+Input:
+s = "aab"
+p = "c*a*b"
+Output: true
+Explanation: c can be repeated 0 times, a can be repeated 1 time. Therefore, it matches "aab".
+
+Example 5:
+
+Input:
+s = "mississippi"
+p = "mis*is*p*."
+Output: false
+
+```
+
+```java
+class Solution {
+    public boolean isMatch(String text, String pattern) {
+        boolean[][] dp = new boolean[text.length() + 1][pattern.length() + 1];
+        dp[text.length()][pattern.length()] = true;
+
+        for (int i = text.length(); i >= 0; i--){
+            for (int j = pattern.length() - 1; j >= 0; j--){
+                boolean first_match = (i < text.length() &&
+                                       (pattern.charAt(j) == text.charAt(i) ||
+                                        pattern.charAt(j) == '.'));
+                if (j + 1 < pattern.length() && pattern.charAt(j+1) == '*'){
+                    dp[i][j] = dp[i][j+2] || first_match && dp[i+1][j];
+                } else {
+                    dp[i][j] = first_match && dp[i+1][j+1];
+                }
+            }
+        }
+        return dp[0][0];
+    }
+}
+```
+
+
+```
+Serialize and Deserialize Binary Tree
+
+Serialization is the process of converting a data structure or object into a sequence of bits so that it can be stored in a file or memory buffer, or transmitted across a network connection link to be reconstructed later in the same or another computer environment.
+
+Design an algorithm to serialize and deserialize a binary tree. There is no restriction on how your serialization/deserialization algorithm should work. You just need to ensure that a binary tree can be serialized to a string and this string can be deserialized to the original tree structure.
+
+Example: 
+
+You may serialize the following tree:
+
+    1
+   / \
+  2   3
+     / \
+    4   5
+
+as "[1,2,3,null,null,4,5]"
+
+Clarification: The above format is the same as how LeetCode serializes a binary tree. You do not necessarily need to follow this format, so please be creative and come up with different approaches yourself.
+
+Note: Do not use class member/global/static variables to store states. Your serialize and deserialize algorithms should be stateless.
+
+```
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+public class Codec {
+
+    // Encodes a tree to a single string.
+    public String serialize(TreeNode root) {
+    ArrayList<String> list = new ArrayList<>();
+    LinkedList<TreeNode> q = new LinkedList<>();
+    q.offer(root);
+ 
+    while (!q.isEmpty()) {
+        TreeNode h = q.poll();
+        if (h == null) {
+            list.add("#");
+        } else {
+            list.add("" + h.val);
+            q.offer(h.left);
+            q.offer(h.right);
+        }
+    }
+ 
+    return String.join(",", list);
+    }
+
+    // Decodes your encoded data to tree.
+    public TreeNode deserialize(String data) {
+            String[] arr = data.split(",");
+    if (arr[0].equals("#")) {
+        return null;
+    }
+ 
+    TreeNode root = new TreeNode(Integer.parseInt(arr[0]));
+    LinkedList<TreeNode> q = new LinkedList<>();
+    q.offer(root);
+ 
+    int i = 1;
+ 
+    while (!q.isEmpty()) {
+        TreeNode h = q.poll();
+        if (h != null) {
+            TreeNode left = null;
+            if (!arr[i].equals("#")) {
+                left = new TreeNode(Integer.parseInt(arr[i]));
+            }
+            h.left = left;
+            q.offer(left);
+            i++;
+ 
+            TreeNode right = null;
+            if (!arr[i].equals("#")) {
+                right = new TreeNode(Integer.parseInt(arr[i]));
+            }
+            h.right = right;
+            q.offer(right);
+            i++;
+        }
+    }
+ 
+    return root;
+    }
+}
+
+// Your Codec object will be instantiated and called as such:
+// Codec codec = new Codec();
+// codec.deserialize(codec.serialize(root));
+```
+
+```
+Task Scheduler
+
+Given a char array representing tasks CPU need to do. It contains capital letters A to Z where different letters represent different tasks. Tasks could be done without original order. Each task could be done in one interval. For each interval, CPU could finish one task or just be idle.
+
+However, there is a non-negative cooling interval n that means between two same tasks, there must be at least n intervals that CPU are doing different tasks or just be idle.
+
+You need to return the least number of intervals the CPU will take to finish all the given tasks.
+
+ 
+
+Example:
+
+Input: tasks = ["A","A","A","B","B","B"], n = 2
+Output: 8
+Explanation: A -> B -> idle -> A -> B -> idle -> A -> B.
+
+ 
+
+Constraints:
+
+    The number of tasks is in the range [1, 10000].
+    The integer n is in the range [0, 100].
+
+```
+
+```java
+class Solution {
+    public int leastInterval(char[] tasks, int n) {
+        int [] map = new int[26];
+        for(char c: tasks){
+            map[c-'A'] ++;
+        }
+        
+        PriorityQueue<Integer> queue = new PriorityQueue<>(26, Collections.reverseOrder());
+        for(int f : map){
+            if(f > 0){
+                queue.add(f);
+            }
+        }
+        int time = 0;
+        while(!queue.isEmpty()){
+            int i = 0;
+            List<Integer> tmp = new ArrayList<>();
+            while( i <= n){
+                if(!queue.isEmpty()){
+                    if(queue.peek() > 1){
+                        tmp.add(queue.poll()-1);
+                    }else{
+                        queue.poll();
+                    }
+                }
+                time++;
+                if(queue.isEmpty() && tmp.size() == 0)
+                    break;
+                i++;
+            }
+            for(int l : tmp){
+                queue.add(l);
+            }
+        }
+        return time;
+    }
+}
+```
+
+
+```
+Add Binary
+
+Given two binary strings, return their sum (also a binary string).
+
+The input strings are both non-empty and contains only characters 1 or 0.
+
+Example 1:
+
+Input: a = "11", b = "1"
+Output: "100"
+
+Example 2:
+
+Input: a = "1010", b = "1011"
+Output: "10101"
+
+ 
+
+Constraints:
+
+    Each string consists only of '0' or '1' characters.
+    1 <= a.length, b.length <= 10^4
+    Each string is either "0" or doesn't contain any leading zero.
+
+```
+
+```java
+class Solution {
+    public String addBinary(String a, String b) {
+        StringBuilder result = new StringBuilder();
+        int i = a.length() - 1;
+        int j = b.length() - 1;
+        int carry = 0;
+        
+        while(i >= 0 || j >= 0){
+            int sum = carry;
+            if(j >= 0)
+                sum += b.charAt(j--) - '0';
+            if(i >= 0)
+                sum += a.charAt(i--) - '0';
+            result.append(sum%2);
+            carry = sum/2;
+        }
+        if(carry != 0)
+            result.append(carry);
+        return result.reverse().toString();
+    }
+}
+```
