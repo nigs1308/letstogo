@@ -2761,3 +2761,256 @@ public List<List<String>> accountsMerge(List<List<String>> accounts) {
 }
 ```
 
+```
+Diameter of Binary Tree
+
+Given a binary tree, you need to compute the length of the diameter of the tree. The diameter of a binary tree is the length of the longest path between any two nodes in a tree. This path may or may not pass through the root.
+
+Example:
+Given a binary tree
+
+          1
+         / \
+        2   3
+       / \     
+      4   5    
+
+Return 3, which is the length of the path [4,2,1,3] or [5,2,1,3].
+
+Note: The length of path between two nodes is represented by the number of edges between them. 
+
+```
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public int diameterOfBinaryTree(TreeNode root) {
+        if(root == null)
+            return 0;
+        AtomicInteger d = new AtomicInteger(0);
+        getDiameter(root, d);
+        return d.get()-1;
+    }
+    
+    public int getDiameter(TreeNode root, AtomicInteger d){
+        if(root == null)
+            return 0;
+        int lH = getDiameter(root.left, d);
+        int rH = getDiameter (root.right, d);
+        int maxD = lH + rH + 1;
+        d.set(Math.max(d.get(), maxD));
+        return Math.max(lH, rH) + 1;
+    }
+}
+```
+
+
+```
+Meeting Rooms II
+
+Given an array of meeting time intervals consisting of start and end times [[s1,e1],[s2,e2],...] (si < ei), find the minimum number of conference rooms required.
+
+Example 1:
+
+Input: [[0, 30],[5, 10],[15, 20]]
+Output: 2
+
+Example 2:
+
+Input: [[7,10],[2,4]]
+Output: 1
+
+NOTE: input types have been changed on April 15, 2019. Please reset to default code definition to get new method signature.
+
+```
+
+```java
+class Solution {
+    public int minMeetingRooms(int[][] intervals) {
+        Arrays.sort(intervals, Comparator.comparing((int[] itv) -> itv[0]));
+        PriorityQueue<Integer> heap = new PriorityQueue<>();
+        
+        int count = 0;
+        for(int [] itv : intervals){
+            if(heap.isEmpty()){
+                count++;
+                heap.offer(itv[1]);
+            }else{
+                if(itv[0] >= heap.peek()){
+                    heap.poll();
+                }else{
+                    count++;
+                }
+                heap.offer(itv[1]);
+            }
+        }
+        return count;
+    }
+}
+```
+
+```
+Read N Characters Given Read4 II - Call multiple times
+
+Given a file and assume that you can only read the file using a given method read4, implement a method read to read n characters. Your method read may be called multiple times.
+
+ 
+
+Method read4:
+
+The API read4 reads 4 consecutive characters from the file, then writes those characters into the buffer array buf.
+
+The return value is the number of actual characters read.
+
+Note that read4() has its own file pointer, much like FILE *fp in C.
+
+Definition of read4:
+
+    Parameter:  char[] buf
+    Returns:    int
+
+Note: buf[] is destination not source, the results from read4 will be copied to buf[]
+
+Below is a high level example of how read4 works:
+
+File file("abcdefghijk"); // File is "abcdefghijk", initially file pointer (fp) points to 'a'
+char[] buf = new char[4]; // Create buffer with enough space to store characters
+read4(buf); // read4 returns 4. Now buf = "abcd", fp points to 'e'
+read4(buf); // read4 returns 4. Now buf = "efgh", fp points to 'i'
+read4(buf); // read4 returns 3. Now buf = "ijk", fp points to end of file
+
+ 
+
+Method read:
+
+By using the read4 method, implement the method read that reads n characters from the file and store it in the buffer array buf. Consider that you cannot manipulate the file directly.
+
+The return value is the number of actual characters read.
+
+Definition of read:
+
+    Parameters:	char[] buf, int n
+    Returns:	int
+
+Note: buf[] is destination not source, you will need to write the results to buf[]
+
+ 
+
+Example 1:
+
+File file("abc");
+Solution sol;
+// Assume buf is allocated and guaranteed to have enough space for storing all characters from the file.
+sol.read(buf, 1); // After calling your read method, buf should contain "a". We read a total of 1 character from the file, so return 1.
+sol.read(buf, 2); // Now buf should contain "bc". We read a total of 2 characters from the file, so return 2.
+sol.read(buf, 1); // We have reached the end of file, no more characters can be read. So return 0.
+
+Example 2:
+
+File file("abc");
+Solution sol;
+sol.read(buf, 4); // After calling your read method, buf should contain "abc". We read a total of 3 characters from the file, so return 3.
+sol.read(buf, 1); // We have reached the end of file, no more characters can be read. So return 0.
+
+ 
+
+Note:
+
+    Consider that you cannot manipulate the file directly, the file is only accesible for read4 but not for read.
+    The read function may be called multiple times.
+    Please remember to RESET your class variables declared in Solution, as static/class variables are persisted across multiple test cases. Please see here for more details.
+    You may assume the destination buffer array, buf, is guaranteed to have enough space for storing n characters.
+    It is guaranteed that in a given test case the same buffer buf is called by read.
+
+
+```
+
+```java
+/**
+ * The read4 API is defined in the parent class Reader4.
+ *     int read4(char[] buf); 
+ */
+
+public class Solution extends Reader4 {
+    char [] buffer = new char[4];
+    int readPos = 0, writePos = 0;
+    /**
+     * @param buf Destination buffer
+     * @param n   Number of characters to read
+     * @return    The number of actual characters read
+     */
+    public int read(char[] buf, int n) {
+        for(int i = 0 ; i < n; i++){
+            if(writePos == readPos){
+                readPos = 0; writePos = 0;
+                int tmp = read4(buffer);
+                if(tmp == 0) return i;
+                writePos += tmp;
+            }
+            buf[i] = buffer[readPos++];
+        }
+        return n;
+    }
+}
+```
+
+```
+Integer to English Words
+
+Convert a non-negative integer to its english words representation. Given input is guaranteed to be less than 231 - 1.
+
+Example 1:
+
+Input: 123
+Output: "One Hundred Twenty Three"
+
+Example 2:
+
+Input: 12345
+Output: "Twelve Thousand Three Hundred Forty Five"
+
+Example 3:
+
+Input: 1234567
+Output: "One Million Two Hundred Thirty Four Thousand Five Hundred Sixty Seven"
+
+Example 4:
+
+Input: 1234567891
+Output: "One Billion Two Hundred Thirty Four Million Five Hundred Sixty Seven Thousand Eight Hundred Ninety One"
+
+
+```
+
+```java
+class Solution {
+    private final String[] belowTen = new String[] {"", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"};
+    private final String[] belowTwenty = new String[] {"Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"};
+    private final String[] belowHundred = new String[] {"", "Ten", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"};
+
+    public String numberToWords(int num) {
+         if (num == 0) return "Zero";
+        return helper(num); 
+    }
+    
+    private String helper(int num){
+        String result = new String();
+        if(num < 10) result = belowTen[num];
+        else if(num < 20) result = belowTwenty[num-10];
+        else if(num < 100) result = belowHundred[num/10] + " " + helper(num % 10);
+        else if(num < 1000) result = helper(num/100) + " Hundred " + helper(num%100);
+        else if (num < 1000000) result = helper(num/1000) + " Thousand " +  helper(num % 1000);
+        else if (num < 1000000000) result = helper(num/1000000) + " Million " +  helper(num % 1000000);
+        else result = helper(num/1000000000) + " Billion " + helper(num % 1000000000);
+        return result.trim();
+    }
+}
+```
