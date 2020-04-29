@@ -4762,3 +4762,133 @@ class Solution {
 }
 
 ```
+
+```
+Confusing Number
+
+Given a number N, return true if and only if it is a confusing number, which satisfies the following condition:
+
+We can rotate digits by 180 degrees to form new digits. When 0, 1, 6, 8, 9 are rotated 180 degrees, they become 0, 1, 9, 8, 6 respectively. When 2, 3, 4, 5 and 7 are rotated 180 degrees, they become invalid. A confusing number is a number that when rotated 180 degrees becomes a different number with each digit valid.
+
+ 
+
+Example 1:
+
+Input: 6
+Output: true
+Explanation: 
+We get 9 after rotating 6, 9 is a valid number and 9!=6.
+
+Example 2:
+
+Input: 89
+Output: true
+Explanation: 
+We get 68 after rotating 89, 86 is a valid number and 86!=89.
+
+Example 3:
+
+Input: 11
+Output: false
+Explanation: 
+We get 11 after rotating 11, 11 is a valid number but the value remains the same, thus 11 is not a confusing number.
+
+Example 4:
+
+Input: 25
+Output: false
+Explanation: 
+We get an invalid number after rotating 25.
+
+ 
+
+Note:
+
+    0 <= N <= 10^9
+    After the rotation we can ignore leading zeros, for example if after rotation we have 0008 then this number is considered as just 8.
+
+```
+
+```java
+class Solution {
+    public boolean confusingNumber(int N) {
+        Map<Integer, Integer> m = new HashMap<>();
+        m.put(0, 0);
+        m.put(1, 1);
+        m.put(6, 9);
+        m.put(8, 8);
+        m.put(9, 6);
+        int rotate = 0;
+        int temp = N;
+        
+        while(temp != 0){
+            int mod = temp % 10;
+            if(!m.containsKey(mod))
+                return false;
+            rotate = 10 * rotate + m.get(mod);
+            temp = temp/10;
+        }
+        return rotate != N;
+    }
+}
+```
+
+```
+Shortest Way to Form String
+
+From any string, we can form a subsequence of that string by deleting some number of characters (possibly no deletions).
+
+Given two strings source and target, return the minimum number of subsequences of source such that their concatenation equals target. If the task is impossible, return -1.
+
+ 
+
+Example 1:
+
+Input: source = "abc", target = "abcbc"
+Output: 2
+Explanation: The target "abcbc" can be formed by "abc" and "bc", which are subsequences of source "abc".
+
+Example 2:
+
+Input: source = "abc", target = "acdbc"
+Output: -1
+Explanation: The target string cannot be constructed from the subsequences of source string due to the character "d" in target string.
+
+Example 3:
+
+Input: source = "xyz", target = "xzyxz"
+Output: 3
+Explanation: The target string can be constructed as follows "xz" + "y" + "xz".
+
+ 
+
+Constraints:
+
+    Both the source and target strings consist of only lowercase English letters from "a"-"z".
+    The lengths of source and target string are between 1 and 1000.
+```
+
+```java
+class Solution {
+    public int shortestWay(String source, String target) {
+        char [] sc = source.toCharArray();
+        char[] ta = target.toCharArray();
+        boolean [] map = new boolean[26];
+        for(char c : sc){
+            map[c-'a']= true;
+        }
+        
+        int j = 0, res = 1;
+        for(int i = 0; i < ta.length; i++, j++){
+            if(!map[ta[i]-'a']) return -1;
+            while(j < sc.length && sc[j] != ta[i]) j++;
+            if(j == sc.length){
+                res ++ ;
+                j = -1;
+                i--;
+            }
+        }
+        return res;
+    }
+}
+```
