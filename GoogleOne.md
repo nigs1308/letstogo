@@ -4532,3 +4532,168 @@ class MyCalendarTwo {
  * boolean param_1 = obj.book(start,end);
  */
  ```
+ 
+ ```
+ Plus One
+
+Given a non-empty array of digits representing a non-negative integer, plus one to the integer.
+
+The digits are stored such that the most significant digit is at the head of the list, and each element in the array contain a single digit.
+
+You may assume the integer does not contain any leading zero, except the number 0 itself.
+
+Example 1:
+
+Input: [1,2,3]
+Output: [1,2,4]
+Explanation: The array represents the integer 123.
+
+Example 2:
+
+Input: [4,3,2,1]
+Output: [4,3,2,2]
+Explanation: The array represents the integer 4321.
+
+```
+
+```java
+class Solution {
+    public int[] plusOne(int[] digits) {
+        if(digits == null || digits.length == 0)
+            return digits;
+        
+        for(int i = digits.length-1 ; i >=0 ; i --){
+            if(digits[i] != 9){
+                digits[i]++;
+                break;
+            }else{
+                digits[i] = 0;
+            }
+        }
+        if(digits[0] == 0){
+            int[] result = new int [digits.length+1];
+            result[0] = 1;
+            return result;
+        }
+        return digits;
+    }
+}
+```
+
+```
+Find And Replace in String
+
+To some string S, we will perform some replacement operations that replace groups of letters with new ones (not necessarily the same size).
+
+Each replacement operation has 3 parameters: a starting index i, a source word x and a target word y.  The rule is that if x starts at position i in the original string S, then we will replace that occurrence of x with y.  If not, we do nothing.
+
+For example, if we have S = "abcd" and we have some replacement operation i = 2, x = "cd", y = "ffff", then because "cd" starts at position 2 in the original string S, we will replace it with "ffff".
+
+Using another example on S = "abcd", if we have both the replacement operation i = 0, x = "ab", y = "eee", as well as another replacement operation i = 2, x = "ec", y = "ffff", this second operation does nothing because in the original string S[2] = 'c', which doesn't match x[0] = 'e'.
+
+All these operations occur simultaneously.  It's guaranteed that there won't be any overlap in replacement: for example, S = "abc", indexes = [0, 1], sources = ["ab","bc"] is not a valid test case.
+
+Example 1:
+
+Input: S = "abcd", indexes = [0,2], sources = ["a","cd"], targets = ["eee","ffff"]
+Output: "eeebffff"
+Explanation: "a" starts at index 0 in S, so it's replaced by "eee".
+"cd" starts at index 2 in S, so it's replaced by "ffff".
+
+Example 2:
+
+Input: S = "abcd", indexes = [0,2], sources = ["ab","ec"], targets = ["eee","ffff"]
+Output: "eeecd"
+Explanation: "ab" starts at index 0 in S, so it's replaced by "eee". 
+"ec" doesn't starts at index 2 in the original S, so we do nothing.
+
+Notes:
+
+    0 <= indexes.length = sources.length = targets.length <= 100
+    0 < indexes[i] < S.length <= 1000
+    All characters in given inputs are lowercase letters.
+
+```
+
+```java
+class Solution {
+    public String findReplaceString(String S, int[] indexes, String[] sources, String[] targets) {
+        int N = S.length();
+        int [] match = new int[N];
+        Arrays.fill(match, -1);
+        
+        for(int i = 0; i < indexes.length; i++){
+            int ix = indexes[i];
+            if(S.substring(ix, ix+sources[i].length()).equals(sources[i])){
+                match[ix] = i;
+            }
+        }
+        
+        StringBuilder ans = new StringBuilder();
+        int ix = 0;
+        while(ix < N){
+            if(match[ix] >= 0){
+                ans.append(targets[match[ix]]);
+                ix += sources[match[ix]].length();
+            }else{
+                ans.append(S.charAt(ix++));
+            }
+        }
+        return ans.toString();
+    }
+}
+```
+
+```
+Merge Intervals
+
+Given a collection of intervals, merge all overlapping intervals.
+
+Example 1:
+
+Input: [[1,3],[2,6],[8,10],[15,18]]
+Output: [[1,6],[8,10],[15,18]]
+Explanation: Since intervals [1,3] and [2,6] overlaps, merge them into [1,6].
+
+Example 2:
+
+Input: [[1,4],[4,5]]
+Output: [[1,5]]
+Explanation: Intervals [1,4] and [4,5] are considered overlapping.
+
+NOTE: input types have been changed on April 15, 2019. Please reset to default code definition to get new method signature.
+
+```
+
+
+```java
+class Solution {
+  private class IntervalComparator implements Comparator<int[]> {
+    @Override
+    public int compare(int[] a, int[] b) {
+      return a[0] < b[0] ? -1 : a[0] == b[0] ? 0 : 1;
+    }
+  }
+
+  public int[][] merge(int[][] intervals) {
+    Collections.sort(Arrays.asList(intervals), new IntervalComparator());
+
+    LinkedList<int[]> merged = new LinkedList<>();
+    for (int[] interval : intervals) {
+      // if the list of merged intervals is empty or if the current
+      // interval does not overlap with the previous, simply append it.
+      if (merged.isEmpty() || merged.getLast()[1] < interval[0]) {
+        merged.add(interval);
+      }
+      // otherwise, there is overlap, so we merge the current and previous
+      // intervals.
+      else {
+        merged.getLast()[1] = Math.max(merged.getLast()[1], interval[1]);
+      }
+    }
+
+    return merged.toArray(new int[merged.size()][]);
+  }
+}
+```
+
