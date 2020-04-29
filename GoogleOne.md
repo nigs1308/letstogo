@@ -4892,3 +4892,226 @@ class Solution {
     }
 }
 ```
+
+```
+Moving Average from Data Stream
+
+Given a stream of integers and a window size, calculate the moving average of all integers in the sliding window.
+
+Example:
+
+MovingAverage m = new MovingAverage(3);
+m.next(1) = 1
+m.next(10) = (1 + 10) / 2
+m.next(3) = (1 + 10 + 3) / 3
+m.next(5) = (10 + 3 + 5) / 3
+
+```
+
+```java
+class MovingAverage {
+
+    double sum;
+    int size;
+    LinkedList<Integer> list;
+    /** Initialize your data structure here. */
+    public MovingAverage(int size) {
+        this.list = new LinkedList<>();
+        this.size = size;
+    }
+    
+    public double next(int val) {
+        sum += val;
+        list.offer(val);
+        if(list.size() <= size){
+            return sum/list.size();
+        }
+        sum -= list.poll();
+        return sum/size;
+    }
+}
+```
+
+
+```
+Missing Ranges
+
+Given a sorted integer array nums, where the range of elements are in the inclusive range [lower, upper], return its missing ranges.
+
+Example:
+
+Input: nums = [0, 1, 3, 50, 75], lower = 0 and upper = 99,
+Output: ["2", "4->49", "51->74", "76->99"]
+
+```
+
+```java
+class Solution {
+    public List<String> findMissingRanges(int[] nums, int lower, int upper) {
+        List<String> result = new ArrayList<>();
+        int start = lower;
+        if(lower == Integer.MAX_VALUE)
+            return result;
+        
+        for(int i = 0 ; i < nums.length; i++){
+            if(i < nums.length-1 && nums[i] == nums[i+1])
+                continue;
+            if(nums[i] == start){
+                start++;
+            }else{
+                result.add(getRange(start, nums[i]-1));
+                if(nums[i] == Integer.MAX_VALUE){
+                    return result;
+                }
+                start = nums[i] + 1;
+            }
+        }
+        if(start <= upper)
+            result.add(getRange(start, upper));
+        return result;
+    }
+    
+    private String getRange(int n1, int n2){
+        return n1 == n2 ?
+                String.valueOf(n1) :
+                String.format("%d->%d", n1, n2);
+    }
+}
+```
+
+
+```
+Add Bold Tag in String
+Given a string s and a list of strings dict, you need to add a closed pair of bold tag <b> and </b> to wrap the substrings in s that exist in dict. If two such substrings overlap, you need to wrap them together by only one pair of closed bold tag. Also, if two substrings wrapped by bold tags are consecutive, you need to combine them.
+
+Example 1:
+
+Input: 
+s = "abcxyz123"
+dict = ["abc","123"]
+Output:
+"<b>abc</b>xyz<b>123</b>"
+
+Example 2:
+
+Input: 
+s = "aaabbcc"
+dict = ["aaa","aab","bc"]
+Output:
+"<b>aaabbc</b>c"
+
+Note:
+
+    The given dict won't contain duplicates, and its length won't exceed 100.
+    All the strings in input have length in range [1, 1000].
+
+```
+
+```java
+class Solution {
+    public String addBoldTag(String s, String[] dict) {
+        if (dict == null || dict.length == 0) {
+            return s;
+        }
+ 
+        // step 1: find start and end pos of the substring
+        //
+        List<Interval> intervals = new ArrayList<>();
+        for (String t : dict) {
+            strStr(s, t, intervals);
+        }
+         
+        if (intervals.isEmpty()) {
+            return s;
+        }
+ 
+        // step 2: sort the intervals based on the start index
+        //
+        Collections.sort(intervals, new IntervalComparator());
+ 
+        // step 3: merge intervals
+        //
+        List<Interval> mergedIntervals = mergeIntervals(intervals);
+ 
+        // step 4: compose the result based on the merged intervals
+        //
+        StringBuilder sb = new StringBuilder();
+        int prev = 0;
+         
+        for (int i = 0; i < mergedIntervals.size(); i++) {
+            Interval curr = mergedIntervals.get(i);
+            // prev seg
+            //
+            sb.append(s.substring(prev, curr.start));
+            sb.append("<b>");
+             
+            // curr seg
+            //
+            sb.append(s.substring(curr.start, curr.end + 1));
+            sb.append("</b>");
+             
+            prev = curr.end + 1;
+        }
+         
+        // trailing substring
+        //
+        if (prev < s.length()) {
+            sb.append(s.substring(prev));
+        }
+ 
+        return sb.toString();
+    }
+    
+    private void strStr(String s, String t, List<Interval> list){
+        for(int i = 0; i < s.length() - t.length() + 1; i++){
+            int j = 0;
+            while(j < t.length()){
+                if(s.charAt(i+j) == t.charAt(j)){
+                    j++;
+                }else{
+                    break;
+                }
+            }
+            if(j == t.length()){
+                Interval interval = new Interval(i, i+j-1);
+                list.add(interval);
+            }
+        }
+    }
+    
+    private List<Interval> mergeIntervals(List<Interval> intervals){
+        List<Interval> ans = new ArrayList<>();
+        if(intervals == null || intervals.isEmpty())
+            return ans;
+        
+        Interval prev = intervals.get(0);
+        for(int i = 1; i < intervals.size() ; i++){
+            Interval curr = intervals.get(i);
+            if(prev.end >= curr.start || prev.end + 1 == curr.start){
+                prev.end = Math.max(prev.end, curr.end);
+            }else{
+                ans.add(new Interval(prev.start, prev.end));
+                prev = curr;
+            }
+        }
+        ans.add(prev);
+        return ans;
+    }
+    
+    class Interval {
+        int start;
+        int end;
+ 
+        public Interval(int s, int e) {
+            start = s;
+            end = e;
+        }
+    }
+ 
+    class IntervalComparator implements Comparator<Interval> {
+        public int compare(Interval a, Interval b) {
+            return a.start - b.start;
+        }
+    }
+}
+```
