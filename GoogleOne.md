@@ -5115,3 +5115,936 @@ class Solution {
     }
 }
 ```
+
+```
+Valid Mountain Array
+
+Given an array A of integers, return true if and only if it is a valid mountain array.
+
+Recall that A is a mountain array if and only if:
+
+    A.length >= 3
+    There exists some i with 0 < i < A.length - 1 such that:
+        A[0] < A[1] < ... A[i-1] < A[i]
+        A[i] > A[i+1] > ... > A[A.length - 1]
+
+
+ 
+
+Example 1:
+
+Input: [2,1]
+Output: false
+
+Example 2:
+
+Input: [3,5,5]
+Output: false
+
+Example 3:
+
+Input: [0,3,2,1]
+Output: true
+
+ 
+
+Note:
+
+    0 <= A.length <= 10000
+    0 <= A[i] <= 10000 
+```
+
+```java
+class Solution {
+    public boolean validMountainArray(int[] A) {
+        if(A == null || A.length < 3)
+            return false;
+        
+        int peak = 0;
+        while(peak + 1 < A.length){
+            if(A[peak+1] <= A[peak]){
+                break;
+            }
+            peak++;
+        }
+        
+        if(peak == 0 || peak == A.length - 1){
+            return false;
+        }
+        while(peak + 1 < A.length){
+            if(A[peak] <= A[peak+1]){
+                return false;
+            }
+            peak++;
+        }
+        return true;
+    }
+}
+```
+
+
+```
+Minimum Area Rectangle
+
+Given a set of points in the xy-plane, determine the minimum area of a rectangle formed from these points, with sides parallel to the x and y axes.
+
+If there isn't any rectangle, return 0.
+
+ 
+
+Example 1:
+
+Input: [[1,1],[1,3],[3,1],[3,3],[2,2]]
+Output: 4
+
+Example 2:
+
+Input: [[1,1],[1,3],[3,1],[3,3],[4,1],[4,3]]
+Output: 2
+
+ 
+
+Note:
+
+    1 <= points.length <= 500
+    0 <= points[i][0] <= 40000
+    0 <= points[i][1] <= 40000
+    All points are distinct.
+
+```
+
+```java
+class Solution {
+    public int minAreaRect(int[][] points) {
+        Set<Integer> pointSet = new HashSet();
+        for (int[] point: points)
+            pointSet.add(40001 * point[0] + point[1]);
+
+        int ans = Integer.MAX_VALUE;
+        for (int i = 0; i < points.length; ++i)
+            for (int j = i+1; j < points.length; ++j) {
+                if (points[i][0] != points[j][0] && points[i][1] != points[j][1]) {
+                    if (pointSet.contains(40001 * points[i][0] + points[j][1]) &&
+                            pointSet.contains(40001 * points[j][0] + points[i][1])) {
+                        ans = Math.min(ans, Math.abs(points[j][0] - points[i][0]) *
+                                            Math.abs(points[j][1] - points[i][1]));
+                    }
+                }
+            }
+
+        return ans < Integer.MAX_VALUE ? ans : 0;
+    }
+}
+```
+
+```
+My Calendar II
+
+Implement a MyCalendarTwo class to store your events. A new event can be added if adding the event will not cause a triple booking.
+
+Your class will have one method, book(int start, int end). Formally, this represents a booking on the half open interval [start, end), the range of real numbers x such that start <= x < end.
+
+A triple booking happens when three events have some non-empty intersection (ie., there is some time that is common to all 3 events.)
+
+For each call to the method MyCalendar.book, return true if the event can be added to the calendar successfully without causing a triple booking. Otherwise, return false and do not add the event to the calendar.
+Your class will be called like this: MyCalendar cal = new MyCalendar(); MyCalendar.book(start, end)
+
+Example 1:
+
+MyCalendar();
+MyCalendar.book(10, 20); // returns true
+MyCalendar.book(50, 60); // returns true
+MyCalendar.book(10, 40); // returns true
+MyCalendar.book(5, 15); // returns false
+MyCalendar.book(5, 10); // returns true
+MyCalendar.book(25, 55); // returns true
+Explanation: 
+The first two events can be booked.  The third event can be double booked.
+The fourth event (5, 15) can't be booked, because it would result in a triple booking.
+The fifth event (5, 10) can be booked, as it does not use time 10 which is already double booked.
+The sixth event (25, 55) can be booked, as the time in [25, 40) will be double booked with the third event;
+the time [40, 50) will be single booked, and the time [50, 55) will be double booked with the second event.
+
+ 
+
+Note:
+
+    The number of calls to MyCalendar.book per test case will be at most 1000.
+    In calls to MyCalendar.book(start, end), start and end are integers in the range [0, 10^9].
+
+```
+
+```
+class MyCalendarTwo {
+
+    List<int[]> calendar;
+    List<int[]> overlaps;
+
+    MyCalendarTwo() {
+        calendar = new ArrayList();
+        overlaps = new ArrayList();
+    }
+
+    public boolean book(int start, int end) {
+        for (int[] iv: overlaps) {
+            if (iv[0] < end && start < iv[1]) return false;
+        }
+        for (int[] iv: calendar) {
+            if (iv[0] < end && start < iv[1])
+                overlaps.add(new int[]{Math.max(start, iv[0]), Math.min(end, iv[1])});
+        }
+        calendar.add(new int[]{start, end});
+        return true;
+    }
+}
+
+/**
+ * Your MyCalendarTwo object will be instantiated and called as such:
+ * MyCalendarTwo obj = new MyCalendarTwo();
+ * boolean param_1 = obj.book(start,end);
+ */
+ ```
+ 
+ ```
+ Plus One
+
+Given a non-empty array of digits representing a non-negative integer, plus one to the integer.
+
+The digits are stored such that the most significant digit is at the head of the list, and each element in the array contain a single digit.
+
+You may assume the integer does not contain any leading zero, except the number 0 itself.
+
+Example 1:
+
+Input: [1,2,3]
+Output: [1,2,4]
+Explanation: The array represents the integer 123.
+
+Example 2:
+
+Input: [4,3,2,1]
+Output: [4,3,2,2]
+Explanation: The array represents the integer 4321.
+
+```
+
+```java
+class Solution {
+    public int[] plusOne(int[] digits) {
+        if(digits == null || digits.length == 0)
+            return digits;
+        
+        for(int i = digits.length-1 ; i >=0 ; i --){
+            if(digits[i] != 9){
+                digits[i]++;
+                break;
+            }else{
+                digits[i] = 0;
+            }
+        }
+        if(digits[0] == 0){
+            int[] result = new int [digits.length+1];
+            result[0] = 1;
+            return result;
+        }
+        return digits;
+    }
+}
+```
+
+
+```
+Delete Nodes And Return Forest
+
+Given the root of a binary tree, each node in the tree has a distinct value.
+
+After deleting all nodes with a value in to_delete, we are left with a forest (a disjoint union of trees).
+
+Return the roots of the trees in the remaining forest.  You may return the result in any order.
+
+ 
+
+Example 1:
+
+Input: root = [1,2,3,4,5,6,7], to_delete = [3,5]
+Output: [[1,2,null,4],[6],[7]]
+
+ 
+
+Constraints:
+
+    The number of nodes in the given tree is at most 1000.
+    Each node has a distinct value between 1 and 1000.
+    to_delete.length <= 1000
+    to_delete contains distinct values between 1 and 1000.
+```
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    List<TreeNode> list = new ArrayList<>();
+    Set<Integer> set = new HashSet<>();
+    public List<TreeNode> delNodes(TreeNode root, int[] to_delete) {
+        for(int i : to_delete){
+            set.add(i);
+        }
+        root = delete(root, true);
+        return list;
+    }
+    
+    private TreeNode delete(TreeNode node, boolean isRoot){
+        if(node ==  null) return null;
+        boolean delete = set.contains(node.val);
+        if(isRoot && !delete) list.add(node);
+        node.left = delete(node.left, delete);
+        node.right = delete(node.right, delete);
+        return delete ? null : node;
+    }
+}
+```
+
+```
+Knight Probability in Chessboard
+
+On an NxN chessboard, a knight starts at the r-th row and c-th column and attempts to make exactly K moves. The rows and columns are 0 indexed, so the top-left square is (0, 0), and the bottom-right square is (N-1, N-1).
+
+A chess knight has 8 possible moves it can make, as illustrated below. Each move is two squares in a cardinal direction, then one square in an orthogonal direction.
+
+ 
+
+ 
+
+Each time the knight is to move, it chooses one of eight possible moves uniformly at random (even if the piece would go off the chessboard) and moves there.
+
+The knight continues moving until it has made exactly K moves or has moved off the chessboard. Return the probability that the knight remains on the board after it has stopped moving.
+
+ 
+
+Example:
+
+Input: 3, 2, 0, 0
+Output: 0.0625
+Explanation: There are two moves (to (1,2), (2,1)) that will keep the knight on the board.
+From each of those positions, there are also two moves that will keep the knight on the board.
+The total probability the knight stays on the board is 0.0625.
+
+ 
+
+Note:
+
+    N will be between 1 and 25.
+    K will be between 0 and 100.
+    The knight always initially starts on the board.
+
+```
+
+```java
+class Solution {
+    public double knightProbability(int N, int K, int sr, int sc) {
+        double [] [] dp = new double[N][N];
+        int[] dr = new int[]{2, 2, 1, 1, -1, -1, -2, -2};
+        int[] dc = new int[]{1, -1, 2, -2, 2, -2, 1, -1};
+        dp[sr][sc] = 1;
+        
+        for(; K > 0; K--){
+            double[][] dp2 = new double[N][N];
+            for(int r = 0 ; r < N ; r++){
+                for(int c = 0 ; c < N ; c++){
+                    for(int k = 0; k < 8 ; k++){
+                        int cr = r + dr[k];
+                        int cc = c + dc[k];
+                        if(0 <= cr && cr < N && 0 <= cc && cc < N){
+                            dp2[cr][cc]  += dp[r][c]/8.0;
+                        }
+                    }
+                }
+            }
+            dp = dp2;
+        }
+        double ans = 0.0;
+        for(double [] row : dp){
+            for(double x : row) ans += x;
+        }
+        return ans;
+    }
+}
+```
+
+```java
+// Shortest form a string
+class Solution {
+    public int shortestWay(String source, String target) {
+        char [] sc = source.toCharArray();
+        char[] ta = target.toCharArray();
+        boolean [] map = new boolean[26];
+        for(char c : sc){
+            map[c-'a']= true;
+        }
+        
+        int j = 0, res = 1;
+        for(int i = 0; i < ta.length; i++, j++){
+            if(!map[ta[i]-'a']) return -1;
+            while(j < sc.length && sc[j] != ta[i]) j++;
+            if(j == sc.length){
+                res ++ ;
+                j = -1;
+                i--;
+            }
+        }
+        return res;
+    }
+}
+```
+
+```java
+//Moving average
+class MovingAverage {
+
+    double sum;
+    int size;
+    LinkedList<Integer> list;
+    /** Initialize your data structure here. */
+    public MovingAverage(int size) {
+        this.list = new LinkedList<>();
+        this.size = size;
+    }
+    
+    public double next(int val) {
+        sum += val;
+        list.offer(val);
+        if(list.size() <= size){
+            return sum/list.size();
+        }
+        sum -= list.poll();
+        return sum/size;
+    }
+}
+
+/**
+ * Your MovingAverage object will be instantiated and called as such:
+ * MovingAverage obj = new MovingAverage(size);
+ * double param_1 = obj.next(val);
+ */
+ 
+ ```java
+ // Add bold tag
+ lass Solution {
+    public String addBoldTag(String s, String[] dict) {
+        if (dict == null || dict.length == 0) {
+            return s;
+        }
+ 
+        // step 1: find start and end pos of the substring
+        //
+        List<Interval> intervals = new ArrayList<>();
+        for (String t : dict) {
+            strStr(s, t, intervals);
+        }
+         
+        if (intervals.isEmpty()) {
+            return s;
+        }
+ 
+        // step 2: sort the intervals based on the start index
+        //
+        Collections.sort(intervals, new IntervalComparator());
+ 
+        // step 3: merge intervals
+        //
+        List<Interval> mergedIntervals = mergeIntervals(intervals);
+ 
+        // step 4: compose the result based on the merged intervals
+        //
+        StringBuilder sb = new StringBuilder();
+        int prev = 0;
+         
+        for (int i = 0; i < mergedIntervals.size(); i++) {
+            Interval curr = mergedIntervals.get(i);
+            // prev seg
+            //
+            sb.append(s.substring(prev, curr.start));
+            sb.append("<b>");
+             
+            // curr seg
+            //
+            sb.append(s.substring(curr.start, curr.end + 1));
+            sb.append("</b>");
+             
+            prev = curr.end + 1;
+        }
+         
+        // trailing substring
+        //
+        if (prev < s.length()) {
+            sb.append(s.substring(prev));
+        }
+ 
+        return sb.toString();
+    }
+    
+    private void strStr(String s, String t, List<Interval> list){
+        for(int i = 0; i < s.length() - t.length() + 1; i++){
+            int j = 0;
+            while(j < t.length()){
+                if(s.charAt(i+j) == t.charAt(j)){
+                    j++;
+                }else{
+                    break;
+                }
+            }
+            if(j == t.length()){
+                Interval interval = new Interval(i, i+j-1);
+                list.add(interval);
+            }
+        }
+    }
+    
+    private List<Interval> mergeIntervals(List<Interval> intervals){
+        List<Interval> ans = new ArrayList<>();
+        if(intervals == null || intervals.isEmpty())
+            return ans;
+        
+        Interval prev = intervals.get(0);
+        for(int i = 1; i < intervals.size() ; i++){
+            Interval curr = intervals.get(i);
+            if(prev.end >= curr.start || prev.end + 1 == curr.start){
+                prev.end = Math.max(prev.end, curr.end);
+            }else{
+                ans.add(new Interval(prev.start, prev.end));
+                prev = curr;
+            }
+        }
+        ans.add(prev);
+        return ans;
+    }
+    
+    class Interval {
+        int start;
+        int end;
+ 
+        public Interval(int s, int e) {
+            start = s;
+            end = e;
+        }
+    }
+ 
+    class IntervalComparator implements Comparator<Interval> {
+        public int compare(Interval a, Interval b) {
+            return a.start - b.start;
+        }
+    }
+}
+```
+
+```
+Backspace String Compare
+
+Given two strings S and T, return if they are equal when both are typed into empty text editors. # means a backspace character.
+
+Note that after backspacing an empty text, the text will continue empty.
+
+Example 1:
+
+Input: S = "ab#c", T = "ad#c"
+Output: true
+Explanation: Both S and T become "ac".
+
+Example 2:
+
+Input: S = "ab##", T = "c#d#"
+Output: true
+Explanation: Both S and T become "".
+
+Example 3:
+
+Input: S = "a##c", T = "#a#c"
+Output: true
+Explanation: Both S and T become "c".
+
+Example 4:
+
+Input: S = "a#c", T = "b"
+Output: false
+Explanation: S becomes "c" while T becomes "b".
+
+Note:
+
+    1 <= S.length <= 200
+    1 <= T.length <= 200
+    S and T only contain lowercase letters and '#' characters.
+
+Follow up:
+
+    Can you solve it in O(N) time and O(1) space?
+
+
+```
+
+```java
+class Solution {
+    public boolean backspaceCompare(String S, String T) {
+        return build(S).equals(build(T));
+    }
+    
+    public String build(String s){
+        Stack<Character> ans = new Stack<>();
+        for(char c: s.toCharArray()){
+            if( c != '#'){
+                ans.push(c);
+            }else if(!ans.empty()){
+                ans.pop();
+            }
+        }
+        return String.valueOf(ans);
+    }
+}
+```
+
+```
+Count Complete Tree Nodes
+
+Given a complete binary tree, count the number of nodes.
+
+Note:
+
+Definition of a complete binary tree from Wikipedia:
+In a complete binary tree every level, except possibly the last, is completely filled, and all nodes in the last level are as far left as possible. It can have between 1 and 2h nodes inclusive at the last level h.
+
+Example:
+
+Input: 
+    1
+   / \
+  2   3
+ / \  /
+4  5 6
+
+Output: 6
+
+
+```
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public int countNodes(TreeNode root) {
+        if(root == null){
+            return 0;
+        }
+ 
+        return 1 + countNodes(root.left) + countNodes(root.right);
+    }
+}
+```
+
+```java
+class Solution {
+    public int longestLine(int[][] M) {
+        int n = M.length, max = 0;
+        if (n == 0) return max;
+        int m = M[0].length;
+        int[][][] dp = new int[n][m][4];
+        for (int i=0;i<n;i++) 
+            for (int j=0;j<m;j++) {
+                if (M[i][j] == 0) continue;
+                for (int k = 0;k < 4;k++) dp[i][j][k] = 1;
+                if (j > 0) dp[i][j][0] += dp[i][j-1][0]; // horizontal line
+                if (j > 0 && i > 0) dp[i][j][1] += dp[i-1][j-1][1]; // anti-diagonal line
+                if (i > 0) dp[i][j][2] += dp[i-1][j][2]; // vertical line
+                if (j < m-1 && i > 0) dp[i][j][3] += dp[i-1][j+1][3]; // diagonal line
+                max = Math.max(max, Math.max(dp[i][j][0], dp[i][j][1]));
+                max = Math.max(max, Math.max(dp[i][j][2], dp[i][j][3]));
+            }
+        return max;
+    }
+}
+```
+
+```java
+// wiggle sort
+class Solution {
+    public void wiggleSort(int[] nums) {
+        if(nums == null || nums.length <= 1)
+            return;
+        
+        for(int i = 1; i < nums.length; i++){
+            if(i % 2 == 1){
+                if(nums[i-1] > nums[i]){
+                    swap(nums, i-1, i);
+                }
+            }else{
+                if(nums[i-1] < nums[i]){
+                    swap(nums, i-1, i);
+                }
+            }
+        }
+    }
+    
+    private void swap(int [] nums, int i , int j){
+        int t = nums[i];
+        nums[i] = nums[j];
+        nums[j] = t;
+    }
+}
+```
+
+```java
+class PhoneDirectory {
+
+    int max;
+    HashSet<Integer> set;
+    LinkedList<Integer> queue;
+    /** Initialize your data structure here
+        @param maxNumbers - The maximum numbers that can be stored in the phone directory. */
+    public PhoneDirectory(int maxNumbers) {
+        set = new HashSet<>();
+        queue = new LinkedList<>();
+        for(int i = 0 ; i < maxNumbers; i++){
+            queue.offer(i);
+        }
+        max = maxNumbers-1;
+    }
+    
+    /** Provide a number which is not assigned to anyone.
+        @return - Return an available number. Return -1 if none is available. */
+    public int get() {
+        if(queue.isEmpty()){
+            return -1;
+        }
+        int e = queue.poll();
+        set.add(e);
+        return e;
+    }
+    
+    /** Check if a number is available or not. */
+    public boolean check(int number) {
+        return !set.contains(number) && number <= max;
+    }
+    
+    /** Recycle or release a number. */
+    public void release(int number) {
+        if(set.contains(number)){
+            set.remove(number);
+            queue.offer(number);
+        }
+    }
+}
+
+/**
+ * Your PhoneDirectory object will be instantiated and called as such:
+ * PhoneDirectory obj = new PhoneDirectory(maxNumbers);
+ * int param_1 = obj.get();
+ * boolean param_2 = obj.check(number);
+ * obj.release(number);
+ */
+ ```
+ 
+ 
+ ```
+ Snapshot Array
+
+Implement a SnapshotArray that supports the following interface:
+
+    SnapshotArray(int length) initializes an array-like data structure with the given length.  Initially, each element equals 0.
+    void set(index, val) sets the element at the given index to be equal to val.
+    int snap() takes a snapshot of the array and returns the snap_id: the total number of times we called snap() minus 1.
+    int get(index, snap_id) returns the value at the given index, at the time we took the snapshot with the given snap_id
+
+ 
+
+Example 1:
+
+Input: ["SnapshotArray","set","snap","set","get"]
+[[3],[0,5],[],[0,6],[0,0]]
+Output: [null,null,0,null,5]
+Explanation: 
+SnapshotArray snapshotArr = new SnapshotArray(3); // set the length to be 3
+snapshotArr.set(0,5);  // Set array[0] = 5
+snapshotArr.snap();  // Take a snapshot, return snap_id = 0
+snapshotArr.set(0,6);
+snapshotArr.get(0,0);  // Get the value of array[0] with snap_id = 0, return 5
+
+ 
+
+Constraints:
+
+    1 <= length <= 50000
+    At most 50000 calls will be made to set, snap, and get.
+    0 <= index < length
+    0 <= snap_id < (the total number of times we call snap())
+    0 <= val <= 10^9
+
+
+```
+
+```java
+class SnapshotArray {
+    List<TreeMap<Integer, Integer>> arr;
+    int currId = 0;
+    public SnapshotArray(int length) {
+        arr = new ArrayList<>();
+        for(int i = 0 ; i < length ; i++){
+            arr.add(i, new TreeMap<Integer, Integer>());
+            arr.get(i).put(0, 0);
+        }
+    }
+    
+    public void set(int index, int val) {
+        arr.get(index).put(currId, val);
+    }
+    
+    public int snap() {
+        return currId ++;
+    }
+    
+    public int get(int index, int snap_id) {
+        return arr.get(index).floorEntry(snap_id).getValue();
+    }
+}
+
+/**
+ * Your SnapshotArray object will be instantiated and called as such:
+ * SnapshotArray obj = new SnapshotArray(length);
+ * obj.set(index,val);
+ * int param_2 = obj.snap();
+ * int param_3 = obj.get(index,snap_id);
+ */
+ ```
+ 
+ ```
+ Guess Number Higher or Lower II
+
+We are playing the Guess Game. The game is as follows:
+
+I pick a number from 1 to n. You have to guess which number I picked.
+
+Every time you guess wrong, I'll tell you whether the number I picked is higher or lower.
+
+However, when you guess a particular number x, and you guess wrong, you pay $x. You win the game when you guess the number I picked.
+
+Example:
+
+n = 10, I pick 8.
+
+First round:  You guess 5, I tell you that it's higher. You pay $5.
+Second round: You guess 7, I tell you that it's higher. You pay $7.
+Third round:  You guess 9, I tell you that it's lower. You pay $9.
+
+Game over. 8 is the number I picked.
+
+You end up paying $5 + $7 + $9 = $21.
+
+Given a particular n ≥ 1, find out how much money you need to have to guarantee a win
+```
+
+```java
+class Solution {
+    public int getMoneyAmount(int n) {
+        if(n == 1) return 0;
+        if(n == 2) return 1;
+
+        int[][] dp = new int[n + 1][n + 1];
+        for(int i = 1; i <= n; i++) {
+            dp[i][i] = 0; // range(i, i)
+        }
+        for(int i = 1; i < n; i++) {
+            dp[i][i + 1] = i; // range(i, i + 1)
+        }
+        for(int len = 3; len <= n; len++) {
+            for (int i = 1; i <= n - len + 1; i++) {
+                int cost = Integer.MAX_VALUE;
+                int j = i + len - 1;
+                for(int pivot = i; pivot <= j; pivot++) {
+                    cost = Math.min(cost, pivot + Math.max((pivot - 1 >= i ? dp[i][pivot - 1] : 0), (pivot + 1 <= j ? dp[pivot + 1][j] : 0)));
+                }
+                dp[i][j] = cost;
+            }
+        }
+        return dp[1][n];
+    }
+}
+```
+
+
+```
+Guess Number Higher or Lower
+
+We are playing the Guess Game. The game is as follows:
+
+I pick a number from 1 to n. You have to guess which number I picked.
+
+Every time you guess wrong, I'll tell you whether the number is higher or lower.
+
+You call a pre-defined API guess(int num) which returns 3 possible results (-1, 1, or 0):
+
+-1 : My number is lower
+ 1 : My number is higher
+ 0 : Congrats! You got it!
+
+Example :
+
+Input: n = 10, pick = 6
+Output: 6
+
+
+```
+
+```java
+/** 
+ * Forward declaration of guess API.
+ * @param  num   your guess
+ * @return 	     -1 if num is lower than the guess number
+ *			      1 if num is higher than the guess number
+ *               otherwise return 0
+ * int guess(int num);
+ */
+
+public class Solution extends GuessGame {
+    public int guessNumber(int n) {
+        int low=1;
+        int high=n;
+
+        while(low <= high){
+            int mid = low+((high-low)/2);
+            int result = guess(mid);
+            if(result==0){
+                return mid;
+            }else if(result==1){
+                low = mid+1;
+            }else{
+                high=mid-1;
+            }
+        }
+
+        return -1;
+    }
+}
+```
